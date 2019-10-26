@@ -11,6 +11,18 @@
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }] // allows for i++ or i-- in third arg of for loop
   },
   "env": {
-    "browser": true
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  // below are the settings for typescript linting
+  "parser": "@typescript-eslint/parser",
+  "plugins": [ "@typescript-eslint" ],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true
+    },
+    "project": "./tsconfig.json"
   }
 }
