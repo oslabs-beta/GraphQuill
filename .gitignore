@@ -1,3 +1,8 @@
+out
+node_modules
+.vscode-test/
+*.vsix
+
 # Logs
 logs
 *.log
