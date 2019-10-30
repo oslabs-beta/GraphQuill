@@ -1,6 +1,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+// eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
+
+// eslint-disable-next-line import/no-unresolved
+const readFileSendReqAndWriteResponse = require('./modules/client/daNasty.js');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -13,10 +17,20 @@ export function activate(context: vscode.ExtensionContext) {
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = vscode.commands.registerCommand('extension.graphQuill', () => {
-    // The code you place here will be executed every time your command is executed
+    // create GraphQuill output channel and show it
+    const gqChannel = vscode.window.createOutputChannel('GraphQuill');
+    gqChannel.show(true);
 
-    // Display a message box to the user
-    vscode.window.showInformationMessage('Test change');
+    // const dummyTextDoc: vscode.TextDocument = {'dummy'};
+
+    // identify current document
+    const currOpenEditor = vscode.window.activeTextEditor;
+    const currActiveDoc: vscode.TextDocument | undefined = currOpenEditor
+      ? currOpenEditor.document
+      : undefined;
+    if (currActiveDoc) {
+      readFileSendReqAndWriteResponse(currActiveDoc.fileName, gqChannel);
+    }
   });
 
   context.subscriptions.push(disposable);
