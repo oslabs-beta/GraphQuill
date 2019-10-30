@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onCommand:extension.graphQuill"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "extension.graphQuill",
+				"title": "graphquill"
 			}
 		]
 	},
@@ -30,13 +30,13 @@
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^2.5.0",
-    "@typescript-eslint/parser": "^2.5.0",
-    "eslint": "^6.1.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.16.0",
-    "eslint-plugin-react-hooks": "^1.7.0",
+		"@typescript-eslint/parser": "^2.5.0",
+		"eslint": "^6.1.0",
+		"eslint-config-airbnb": "^18.0.1",
+		"eslint-plugin-import": "^2.18.2",
+		"eslint-plugin-jsx-a11y": "^6.2.3",
+		"eslint-plugin-react": "^7.16.0",
+		"eslint-plugin-react-hooks": "^1.7.0",
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^5.2.6",
 		"@types/node": "^10.12.21",
@@ -46,7 +46,7 @@
 		"typescript": "^3.3.1",
 		"vscode-test": "^1.2.0"
 	},
-  "dependencies": {
-    "nodemon": "^1.19.4"
-  }
+	"dependencies": {
+		"nodemon": "^1.19.4"
+	}
 }
