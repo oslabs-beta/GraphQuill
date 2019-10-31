@@ -47,6 +47,7 @@
 		"vscode-test": "^1.2.0"
 	},
 	"dependencies": {
+		"node-fetch": "^2.6.0",
 		"nodemon": "^1.19.4"
 	}
 }
