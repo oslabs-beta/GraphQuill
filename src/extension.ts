@@ -1,10 +1,12 @@
+/* eslint-disable import/no-unresolved */
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
 
-// eslint-disable-next-line import/no-unresolved
 const readFileSendReqAndWriteResponse = require('./modules/client/daNasty.js');
+const serverOn = require('./modules/server/serverOn.js');
+const serverOff = require('./modules/server/serverOff.js');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -17,20 +19,23 @@ export function activate(context: vscode.ExtensionContext) {
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = vscode.commands.registerCommand('extension.graphQuill', () => {
-    // create GraphQuill output channel and show it
-    const gqChannel = vscode.window.createOutputChannel('GraphQuill');
-    gqChannel.show(true);
+    serverOn().then(() => {
+      console.log('serverOn promise resolved');
+      // create GraphQuill output channel and show it
+      const gqChannel = vscode.window.createOutputChannel('GraphQuill');
+      gqChannel.show(true);
 
-    // const dummyTextDoc: vscode.TextDocument = {'dummy'};
+      // const dummyTextDoc: vscode.TextDocument = {'dummy'};
 
-    // identify current document
-    const currOpenEditor = vscode.window.activeTextEditor;
-    const currActiveDoc: vscode.TextDocument | undefined = currOpenEditor
-      ? currOpenEditor.document
-      : undefined;
-    if (currActiveDoc) {
-      readFileSendReqAndWriteResponse(currActiveDoc.fileName, gqChannel);
-    }
+      // identify current document
+      const currOpenEditor = vscode.window.activeTextEditor;
+      const currActiveDoc: vscode.TextDocument | undefined = currOpenEditor
+        ? currOpenEditor.document
+        : undefined;
+      if (currActiveDoc) {
+        readFileSendReqAndWriteResponse(currActiveDoc.fileName, gqChannel, serverOff);
+      }
+    }).catch((err: Error) => console.log(err));
   });
 
   context.subscriptions.push(disposable);

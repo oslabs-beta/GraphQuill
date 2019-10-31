@@ -9,6 +9,7 @@
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
 
+const fetch = require('node-fetch');
 const fs = require('fs');
 
 // check if parens are balanced for parsed query strings
@@ -128,8 +129,8 @@ function extractQueries(string: string) {
 // call helper functions to parse out query string,
 // send request to GraphQL API,
 // and return response to output channel
-function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.OutputChannel) {
-  if (channel) console.log('received channel successfully');
+function readFileSendReqAndWriteResponse(filePath: string,
+  channel: vscode.OutputChannel, callback: any) {
   // read user's file
   fs.readFile(filePath, (err: Error, data: Buffer) => {
     if (err) {
@@ -138,10 +139,24 @@ function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.Outpu
       // if no error, convert data to string and pass into gQParser to pull out query/ies
       const result: (string | Error)[] = extractQueries(data.toString());
       // send post request to API/graphql
+      setTimeout(() => {
+        fetch('http://localhost:3000/')
+          .then((response: any) => response.text())
+          .then((thing: any) => {
+            console.log('printed: ', thing);
+            channel.append(`look at this shit: ${thing}`);
+            channel.show(true);
+            callback();
+          })
+          .catch((error: Error) => {
+            callback();
+            console.log(error);
+          });
+      }, 1000);
       // then send response back to vscode output channel
-      console.log(result);
-      channel.append(`result: ${result}`);
-      channel.show(true);
+      // console.log(result);
+      // channel.append(`result: ${result}`);
+      // channel.show(true);
     }
   });
 }
