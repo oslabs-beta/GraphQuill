@@ -138,25 +138,33 @@ function readFileSendReqAndWriteResponse(filePath: string,
     } else {
       // if no error, convert data to string and pass into gQParser to pull out query/ies
       const result: (string | Error)[] = extractQueries(data.toString());
+
       // send post request to API/graphql
+
       setTimeout(() => {
+        console.log('IN SET TIMEOUT');
+
         fetch('http://localhost:3000/')
-          .then((response: any) => response.text())
+          .then((response: any) => {
+            console.log(response);
+            return response.text();
+          })
           .then((thing: any) => {
             console.log('printed: ', thing);
             channel.append(`look at this shit: ${thing}`);
             channel.show(true);
-            callback();
+            callback(); // serverOff
           })
           .catch((error: Error) => {
-            callback();
-            console.log(error);
+            callback(); // serverOff
+            console.log('fetch catch error: ', error);
           });
-      }, 1000);
+      }, 5000);
+
       // then send response back to vscode output channel
-      // console.log(result);
-      // channel.append(`result: ${result}`);
-      // channel.show(true);
+      console.log(result);
+      channel.append(`result: ${result}`);
+      channel.show(true);
     }
   });
 }

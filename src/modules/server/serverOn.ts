@@ -38,6 +38,9 @@ const serverOn = () => {
     setTimeout(() => {
       console.log('base: ', base);
       console.log('Sending stdin to terminal');
+
+      // this seems to take some time to spin up the server and
+      // throws an error with the timing of a fetch
       terminal.stdin.write(`node ${base}/index.js\n`);
       console.log('Ending terminal session');
       terminal.stdin.end();
