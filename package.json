@@ -2,6 +2,7 @@
 	"name": "graphquill",
 	"displayName": "GraphQuill",
 	"description": "",
+	"publisher": "sproutdeveloping",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.39.0"
