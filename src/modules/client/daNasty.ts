@@ -56,7 +56,7 @@ function checkQueryBrackets(queryString: string) {
         if (validateBracketToken(definedPopped)) {
           // if the closing bracket associated with the popped opening bracket doesn't match
           // the closing bracket that is the current char, return an error
-          if (BracketTokens[definedPopped] !== queryString[i]) return new Error(`succcccccccc ${stack}`);
+          if (BracketTokens[definedPopped] !== queryString[i]) return new Error(`succcccccccc it ${stack}`);
         }
       }
     }
@@ -116,6 +116,7 @@ function extractQueries(string: string) {
       queriesArr.push(parseQuery(string.slice(i + gq.length)));
     }
   }
+
   // after finding all instances of 'graphQuill' and parsing out query strings,
   // map queries to new array full of either valid queries of errors
   const validatedQueriesArr: (string | Error)[] = queriesArr.map((queryString) => (
@@ -138,25 +139,42 @@ function readFileSendReqAndWriteResponse(filePath: string,
     } else {
       // if no error, convert data to string and pass into gQParser to pull out query/ies
       const result: (string | Error)[] = extractQueries(data.toString());
+
       // send post request to API/graphql
+
       setTimeout(() => {
-        fetch('http://localhost:3000/')
-          .then((response: any) => response.text())
+        console.log('IN SET TIMEOUT');
+        // parse off the extra quotes
+        const queryMinusQuotes: string = typeof result[1] === 'string'
+          ? result[1].slice(1, result[1].length - 1)
+          : 'error';
+
+        console.log('query w/o quotes is', queryMinusQuotes);
+
+        fetch('http://localhost:3000/graphql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: queryMinusQuotes }),
+        }).then((response: any) => {
+          console.log('response is', response, typeof response);
+          return response.json();
+        })
           .then((thing: any) => {
             console.log('printed: ', thing);
-            channel.append(`look at this shit: ${thing}`);
+            channel.append(`look at this shit: ${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
             channel.show(true);
-            callback();
+            callback(); // serverOff
           })
           .catch((error: Error) => {
-            callback();
-            console.log(error);
+            callback(); // serverOff
+            console.log('fetch catch error: ', error);
           });
-      }, 1000);
+      }, 5000);
+
       // then send response back to vscode output channel
-      // console.log(result);
-      // channel.append(`result: ${result}`);
-      // channel.show(true);
+      console.log(result);
+      channel.append(`result: ${result}`);
+      channel.show(true);
     }
   });
 }
