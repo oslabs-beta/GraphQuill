@@ -7,7 +7,7 @@
 			"dom",
 			"es6"
 		],
-		"watch": true,
+		"watch": false,
 		"sourceMap": true,
 		"rootDir": "src",
 		"strict": true   /* enable all strict type-checking options */
