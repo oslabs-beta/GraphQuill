@@ -6,7 +6,8 @@
 		"lib": [
 			"dom",
 			"es6"
-		],
+    ],
+    // if watch is set to true it will mess up vsce package because compiling will never end...
 		"watch": false,
 		"sourceMap": true,
 		"rootDir": "src",

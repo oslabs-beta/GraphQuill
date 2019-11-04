@@ -4,7 +4,7 @@
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
 
-const readFileSendReqAndWriteResponse = require('./modules/client/daNasty.js');
+const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse.js');
 const serverOn = require('./modules/server/serverOn.js');
 const serverOff = require('./modules/server/serverOff.js');
 
