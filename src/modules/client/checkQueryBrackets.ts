@@ -1,58 +1,42 @@
+/**
+ * @module : parser.ts
+ * @author : Austin Ruby
+ * @function : parse string for instances of 'graphQuill' and extract content
+ * within parens immediately following each instance
+ * @changelog : Ed Greenberg, November 4th, 2019, rewrote to remove enum bug
+ * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * * */
+
+
 // check if parens are balanced for parsed query strings
 // if they're balanced, return original query string
 // if they're not, return error message with imbalanced bracket/s
 function checkQueryBrackets(queryString: string) {
-  // mapping opening brackets to corresponding closing brackets
-  enum BracketTokens {
-    '(' = ')',
-    '{' = '}',
-    '[' = ']'
-  }
-  // defining closing brackets
-  enum closeBrackets {
-    ')',
-    '}',
-    ']'
-  }
+  const stack: string[] = []; // the core of the function...
+  // ...where detected opening brackets will be pushed in and pop off when the parser finds a mate
+  const validatedSoFar: string[] = []; // a running copy of the query
+  const openings: string = '{[('; // list of opening brackets
+  const closings: string = '}])'; // list of closing brackets
 
-  // validate that a string character is a possible lookup value in the BracketTokens enum
-  function validateBracketToken(char: string): char is keyof typeof BracketTokens {
-    return char in BracketTokens;
-  }
 
-  // initialize stack to push open brackets onto
-  const stack: string[] = [];
-  // iterate over query string looking for open and close brackets
-  // as defined by the BracketTokens and closeBrackets enums
-  for (let i: number = 0; i < queryString.length; i++) {
-    // push current char onto stack if current char is open bracket
-    if (queryString[i] in BracketTokens) stack.push(queryString[i]);
-    // if current char is close bracket
-    else if (queryString[i] in closeBrackets) {
-      // pop last element off of stack as 'popped'
-      const popped: string | undefined = stack.pop();
-      // initialize validatedPopped as a string to hold popped chars that are not undefined
-      let definedPopped: string;
-      // double check that popped is defined before doing anything with
-      // it that could throw and error if it's undefined
-      if (popped !== undefined) {
-        // assign definedPopped to popped value now that it's definitely not undefined
-        definedPopped = popped;
-        // check if definedPopped exists as index in BracketTokens
-        if (validateBracketToken(definedPopped)) {
-          // if the closing bracket associated with the popped opening bracket doesn't match
-          // the closing bracket that is the current char, return an error
-          if (BracketTokens[definedPopped] !== queryString[i]) return new Error(`succcccccccc it ${stack}`);
-        }
-      }
+  // eslint-disable-next-line no-restricted-syntax
+  for (const el of queryString) { // loop the query
+    if (openings.includes(el)) stack.push(el); // if query el is opening bracket, add el to stack
+    if (closings.includes(el)) {
+      if (stack[stack.length - 1] === openings[closings.indexOf(el)]) stack.pop();
+      // if top of stack mates a new closing bracket, we are good, can reduce stack and keep going
+      else break;
+      // if the top of stack does not mate closing bracket, we stop loop and skip to declaring error
     }
+    validatedSoFar.push(el); // helping keep running copy of query
   }
-  // if the loop gets through the entire string without throwing an error,
-  // if nothing is left in the stack, then the query is balanced and it is returned
-  // otherwise throw an error
-  return stack.length === 0
-    ? queryString.slice(1, queryString.length - 1)
-    : new Error(`succcccccccc ${stack}`);
+
+
+  return stack.length === 0 // this will be zero if all query brackets have matches
+    ? queryString.slice(1, queryString.length - 1) // this substring is sent ahead if validated
+    : new Error(`${`The following character makes the query unbalanced: ${stack[stack.length - 1]}\n`
+      + 'The portion of the query that ran before the unbalance was detected was:\n'}${
+      validatedSoFar.join('')}\n\n`); // ...otherwise, we report an error
 }
 
 module.exports = checkQueryBrackets;
