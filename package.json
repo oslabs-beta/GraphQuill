@@ -27,7 +27,9 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
-		"test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "parseUnitTest": "node ./out/test/suite/parser.test.js",
+    "serverUnitTest": "node ./out/test/suite/server.test.js"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^2.5.0",
