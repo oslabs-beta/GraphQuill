@@ -13,17 +13,23 @@ const serverOff = require('./modules/server/serverOff.js');
 export function activate(context: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "graphquill" is now active!');
+  console.log('Congratulations, your extension "graphquill" is now active!\n');
+
+  let graphQuillChannelRef: vscode.OutputChannel;
+
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  const disposable = vscode.commands.registerCommand('extension.graphQuill', () => {
+  const disposable = vscode.commands.registerCommand('extension.activateGraphQuill', () => {
     serverOn().then(() => {
       console.log('serverOn promise resolved');
       // create GraphQuill output channel and show it
       const gqChannel = vscode.window.createOutputChannel('GraphQuill');
       gqChannel.show(true);
+
+      graphQuillChannelRef = gqChannel;
+      // console.log('--channel type is', gqChannel, typeof gqChannel, gqChannel.constructor.name);
 
       // const dummyTextDoc: vscode.TextDocument = {'dummy'};
 
@@ -33,13 +39,31 @@ export function activate(context: vscode.ExtensionContext) {
         ? currOpenEditor.document
         : undefined;
       if (currActiveDoc) {
-        readFileSendReqAndWriteResponse(currActiveDoc.fileName, gqChannel, serverOff);
+        readFileSendReqAndWriteResponse(currActiveDoc.fileName, gqChannel);
       }
     }).catch((err: Error) => console.log(err));
   });
 
   context.subscriptions.push(disposable);
+
+  const disposableDisableGraphQuill = vscode.commands.registerCommand('extension.deactivateGraphQuill', () => {
+    console.log('--deactivate functionality triggered');
+    // close/hide GraphQuill channel
+    graphQuillChannelRef.dispose();
+
+    // invoke server off in this function
+    return setTimeout(() => serverOff(3000), 1);
+  });
+
+  context.subscriptions.push(disposableDisableGraphQuill);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+  // deactivate must return a promise if cleanup operations are async.
+  // turn the server off if vscode is closed (tested via lsof in terminal)
+  // TODO pass in port number variable here (may need to use a global variable to
+  // TODO  pass it down to this function)
+  return setTimeout(() => serverOff(3000), 1);
+  // console.log('---deactive function called!!');
+}

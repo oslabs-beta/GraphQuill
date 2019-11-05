@@ -10,7 +10,9 @@
  * @author : Austin Ruby
  * @function : parse string for instances of 'graphQuill' and extract content
  * within parens immediately following each instance
- * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * @changelog : Alex Chao
+ * * Removed server off callback so the server stays open throughout the extension's lifetime.
+ * * PORT is killed in extension.ts upon closing vscode.
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -31,8 +33,7 @@ const extractQueries = require('./extractQueries.js');
 // call helper functions to parse out query string,
 // send request to GraphQL API,
 // and return response to output channel
-function readFileSendReqAndWriteResponse(filePath: string,
-  channel: vscode.OutputChannel, callback: any) {
+function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.OutputChannel) {
   // read user's file
   fs.readFile(filePath, (err: Error, data: Buffer) => {
     if (err) {
@@ -45,6 +46,7 @@ function readFileSendReqAndWriteResponse(filePath: string,
 
       setTimeout(() => {
         console.log('IN SET TIMEOUT');
+
         // parse off the extra quotes
         const queryMinusQuotes: string = typeof result[1] === 'string'
           ? result[1].slice(1, result[1].length - 1)
@@ -52,22 +54,20 @@ function readFileSendReqAndWriteResponse(filePath: string,
 
         console.log('query w/o quotes is', queryMinusQuotes);
 
+        // send the fetch to the correct port
+        // TODO Ed is working on passing a parsed port number into here?
         fetch('http://localhost:3000/graphql', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: queryMinusQuotes }),
-        }).then((response: any) => {
-          console.log('response is', response, typeof response);
-          return response.json();
         })
-          .then((thing: any) => {
-            console.log('printed: ', thing);
+          .then((response: Response) => response.json())
+          .then((thing: Object) => {
+            // console.log('--parsed response is: ', thing, thing.constructor.name);
             channel.append(`look at this shit: ${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
             channel.show(true);
-            callback(); // serverOff
           })
           .catch((error: Error) => {
-            callback(); // serverOff
             console.log('fetch catch error: ', error);
           });
       }, 5000);

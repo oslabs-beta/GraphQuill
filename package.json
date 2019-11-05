@@ -11,15 +11,20 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.graphQuill"
+    "onCommand:extension.activateGraphQuill",
+    "onCommand:extension.deactivateGraphQuill"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.graphQuill",
-				"title": "graphquill"
-			}
+				"command": "extension.activateGraphQuill",
+				"title": "GraphQuill: Activate"
+      },
+      {
+        "command": "extension.deactivateGraphQuill",
+        "title": "GraphQuill: Deactivate"
+      }
 		]
 	},
 	"scripts": {

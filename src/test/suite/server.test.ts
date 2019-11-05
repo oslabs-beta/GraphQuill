@@ -1,6 +1,8 @@
 // ! ALL CODE IS COPIED FROM PARSER.TEST.JS, NEEDS TO BE UPDATED TO TEST ANY SERVER STUFF
 // ! Also might need super test...
 
+// ! I need to look into how to even test a server/terminal/child process...
+
 // * THIS LINE SETS THE ENVIRONMENT TO MOCHA, so describe, it etc. are not undefined
 /* eslint-env mocha */
 
