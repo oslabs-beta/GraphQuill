@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       // const dummyTextDoc: vscode.TextDocument = {'dummy'};
 
-      // identify current document
+      // identify file where queries are present
 
       let currOpenEditor: any = vscode.window.activeTextEditor!.document.fileName;
       let root = path.dirname(vscode.window.activeTextEditor!.document.fileName);

@@ -6,10 +6,12 @@
 
 
 /**
- * @module : parser.ts
+ * @module : readFileSendReqAndWriteResponse.ts
  * @author : Austin Ruby
  * @function : parse string for instances of 'graphQuill' and extract content
  * within parens immediately following each instance
+ * @changelog : Ed Greenberg, November 5th, 2019, copy out boilerplate function invocation
+ * to query file if not present
  * @changelog : ##WHOEVER CHANGES THE FILE, date, details
  * * */
 
@@ -35,6 +37,11 @@ function readFileSendReqAndWriteResponse(filePath: string,
   channel: vscode.OutputChannel, callback: any) {
 
   console.log('inreadFile: ', filePath);
+  const copy = fs.readFileSync(filePath).toString();
+  if (!copy.includes('function graphQuill')) {
+    const newFile = `function graphQuill() {}\n${copy}`;
+    fs.writeFileSync(filePath, newFile);
+  }
 
   // read user's file
   fs.readFile(filePath, (err: Error, data: Buffer) => {
