@@ -6,7 +6,7 @@ const childProcess = require('child_process');
 
 
 // I'm assuming that ed will pass in a path here to the entry point
-const serverOn = (entryPointRelative: string = 'index.js') => {
+export default function serverOn(entryPointRelative: string = 'index.js'): Promise<void> {
   // moved this line into the serverOn file so that each time serverOn is called
   // a new child process is started. This is critical to being able to toggle
   // GraphQuill on and off
@@ -63,6 +63,6 @@ const serverOn = (entryPointRelative: string = 'index.js') => {
   });
 
   // this message pops up to the user upon completion of the command
-};
+}
 
 module.exports = serverOn;

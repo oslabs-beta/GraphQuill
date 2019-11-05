@@ -5,11 +5,14 @@ import * as vscode from 'vscode';
 const childProcess = require('child_process');
 
 // spawn a new child process that will be used to close the open port
-const terminal2 = childProcess.spawn('bash');
 
 // I'm expecting the portNumber to be parsed off somewhere upsteam ot know which port of
 // localhost to query in the extension.ts. For now it will default to 3000.
 const serverOff = (portNumber: Number = 3000) => {
+  // this one also had to be pulled into serverOff so that a new child process is started to
+  // kill the server port
+  const terminal2 = childProcess.spawn('bash');
+
   // write any data/outputs from the terminal to the extension console
   terminal2.stdout.on('data', (data: Buffer) => {
     console.log(`stdout: ${data}`);
@@ -17,7 +20,7 @@ const serverOff = (portNumber: Number = 3000) => {
 
   // on terminal exit, print the exit code
   terminal2.on('exit', (code: Number) => {
-    console.log(`child process exited with code ${code}`);
+    console.log(`terminal2 child process exited with code ${code}`);
   });
 
   // Find and kill the port
