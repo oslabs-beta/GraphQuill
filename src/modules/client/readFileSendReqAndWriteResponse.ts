@@ -72,7 +72,7 @@ function readFileSendReqAndWriteResponse(filePath: string,
         })
           .then((thing: any) => {
             console.log('printed: ', thing);
-            channel.append(`look at this shit: ${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
+            channel.append(`look at this: ${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
             channel.show(true);
             callback(); // serverOff
           })
