@@ -1,22 +1,28 @@
+/**
+ * @author : Ed Greenberg
+ * @function : turn on server
+ * @changelog : Ed Greenberg, November 5th, 2019, rewrote to open port on server/index.js
+ * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * * */
+
+
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
 
 const path = require('path');
 const childProcess = require('child_process');
+const fs = require('fs');
 
 const terminal = childProcess.spawn('bash');
 
 const serverOn = () => {
-  // to start the command body, we identify the path of the user's active file
-  // note the bang operator, Typescript feature that lets the program handle
-  // a variable that could potentially be undefined
-  // (without the bang, the file would run locally,
-  // but throws an error upon attempt to upload to the VS Code Marketplace)
-  const temp = vscode.window.activeTextEditor!.document.fileName;
-
-  // next, we truncate to obtain the folder of the active file;
-  // WARNING: for sucess, we must be in the same folder as the server!
-  const base = path.dirname(temp);
+  // we find the root directory by looking up from the active file
+  // ...until we detect a folder with package.json
+  let root = path.dirname(vscode.window.activeTextEditor!.document.fileName);
+  while (!fs.existsSync(`${root}/package.json`)) {
+    root = path.dirname(root);
+    console.log('a root grows: ', root);
+  }
 
   // next, we activate two terminal methods to give us
   // feedback on whether we sucessfully used a child process
@@ -36,12 +42,12 @@ const serverOn = () => {
   return new Promise((resolve) => {
     console.log('inside promise');
     setTimeout(() => {
-      console.log('base: ', base);
+      console.log('root: ', root);
       console.log('Sending stdin to terminal');
 
       // this seems to take some time to spin up the server and
       // throws an error with the timing of a fetch
-      terminal.stdin.write(`node ${base}/index.js\n`);
+      terminal.stdin.write(`node ${root}/server/index.js\n`);
       console.log('Ending terminal session');
       terminal.stdin.end();
       resolve();

@@ -33,6 +33,9 @@ const extractQueries = require('./extractQueries.js');
 // and return response to output channel
 function readFileSendReqAndWriteResponse(filePath: string,
   channel: vscode.OutputChannel, callback: any) {
+
+  console.log('inreadFile: ', filePath);
+
   // read user's file
   fs.readFile(filePath, (err: Error, data: Buffer) => {
     if (err) {

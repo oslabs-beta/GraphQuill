@@ -27,7 +27,7 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
-    "test": "node ./out/test/runTest.js",
+		"test": "node ./out/test/runTest.js",
 		"parseUnitTest": "mocha -r ts-node/register src/test/suite/parser.test.ts"
 	},
 	"devDependencies": {
