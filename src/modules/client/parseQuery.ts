@@ -1,6 +1,6 @@
 
 // add characters to string while within parentheses
-function parseQuery(input: string) {
+export default function parseQuery(input: string) {
   // initialize queryString to return once stack is empty
   let queryString: string = '';
   // initialize open and close parens
@@ -19,7 +19,7 @@ function parseQuery(input: string) {
     if (currentChar === openParen) {
       stack.push(currentChar);
     } else if (currentChar === closeParen) {
-      if (!stack.length) return 'unbalanced parens';
+      if (!stack.length) return 'unbalanced parens'; // unreachable line of code - Ed fix this too?
       stack.pop();
     }
     // add current char to queryString and increment index before next iteration of loop
@@ -29,4 +29,4 @@ function parseQuery(input: string) {
   return queryString;
 }
 
-module.exports = parseQuery;
+// export default parseQuery;

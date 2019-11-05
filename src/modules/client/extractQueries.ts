@@ -1,8 +1,9 @@
 /* eslint-disable import/no-unresolved */
 // import { builtinModules } from 'module';
 
+import parseQuery from './parseQuery.js';
+
 const useCheckQueryBrackets = require('./checkQueryBrackets.js');
-const useParseQuery = require('./parseQuery.js');
 
 // given file path, read file at path and parse for instances of 'graphQuill'
 function extractQueries(string: string) {
@@ -17,7 +18,7 @@ function extractQueries(string: string) {
     // string sliced from current char to end
     // into queriesArr
     if (string.slice(i, i + gq.length) === gq) {
-      queriesArr.push(useParseQuery(string.slice(i + gq.length)));
+      queriesArr.push(parseQuery(string.slice(i + gq.length)));
     }
   }
 
