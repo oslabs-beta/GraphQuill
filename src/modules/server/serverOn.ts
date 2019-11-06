@@ -33,6 +33,9 @@ const serverOn = () => {
   // feedback on whether we sucessfully used a child process
   // note the Typescript (: any) used to handle unknown data inputs
   terminal.stdout.on('data', (data: Buffer) => {
+    // todo add validation, if there is an error that is logged here, it's coming from node
+    // todo and should be piped to the channel as well
+    // todo this may require passing in the channel to the serverOn function...
     console.log(`stdout from terminal: ${data}`);
     // console.log('---data type is', data.constructor.name);
   });
@@ -63,7 +66,7 @@ const serverOn = () => {
       resolve();
       console.log('just resolved');
 
-      vscode.window.showInformationMessage('Your local server should be on.');
+      vscode.window.showInformationMessage('GraphQuill Activated');
     }, 1);
   });
 

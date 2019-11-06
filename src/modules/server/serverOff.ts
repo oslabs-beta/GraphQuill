@@ -16,6 +16,7 @@ const childProcess = require('child_process');
 // spawn a new child process that will be used to close the open port
 
 const serverOff = (portNumber: Number = 3000) => {
+  console.log('in serveroff function file');
   // this one also had to be pulled into serverOff so that a new child process is started to
   // kill the server port
   const terminal2 = childProcess.spawn('bash');
@@ -55,16 +56,18 @@ const serverOff = (portNumber: Number = 3000) => {
   }
 
   // in target, we slice the port out of the array (offsetting as required by the edge case test)
+  // eslint-disable-next-line no-unused-vars
   const target = data.slice(lookup + 11 + displace, lookup + 15 + displace);
 
   // ? I don't think these need to be delayed... just kill the process
   // in the core of our function, we run a special command that finds and kills the port specified
   // setTimeout(() => {
-  terminal2.stdin.write(`kill $(lsof -t -i:${target})\n`);
+  // terminal2.stdin.write(`kill $(lsof -t -i:${target})\n`);
+  terminal2.stdin.write(`kill $(lsof -t -i:${portNumber})\n`);
   terminal2.stdin.end();
-  // }, 1000);
+  // }, 1);
 
-  vscode.window.showInformationMessage('Your local server should be off.');
+  vscode.window.showInformationMessage('GraphQuill has been turned off');
 };
 
 module.exports = serverOff;

@@ -52,14 +52,14 @@ function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.Outpu
       // send post request to API/graphql
 
       setTimeout(() => {
-        console.log('IN SET TIMEOUT');
+        // console.log('IN SET TIMEOUT');
 
         // parse off the extra quotes
         const queryMinusQuotes: string = typeof result[1] === 'string'
           ? result[1].slice(1, result[1].length - 1)
           : 'error';
 
-        console.log('query w/o quotes is', queryMinusQuotes);
+        // console.log('query w/o quotes is', queryMinusQuotes);
 
         // send the fetch to the correct port
         // TODO Ed is working on passing a parsed port number into here?
@@ -71,17 +71,19 @@ function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.Outpu
           .then((response: Response) => response.json())
           .then((thing: Object) => {
             console.log('printed: ', thing);
-            channel.append(`look at this: ${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
+            channel.append(`Responses are:\n${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
             channel.show(true);
           })
           .catch((error: Error) => {
-            console.log('fetch catch error: ', error);
+            console.log('fetch catch error: ', error, typeof error, error.constructor.name);
+            channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
           });
-      }, 5000);
+      }, 5000); // TODO BIG UX FIX NEEDED HERE
 
       // then send response back to vscode output channel
-      console.log(result);
-      channel.append(`result: ${result}`);
+      // console.log('parsed queries are', result);
+      // TODO match these up with the correct queries when there are multiple within a single file
+      channel.append(`GraphQuill Queries are:\n${result.filter((e : string|Error) => (typeof e === 'string' ? e.length : 0))}\n`);
       channel.show(true);
     }
   });

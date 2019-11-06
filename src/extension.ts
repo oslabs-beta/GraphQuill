@@ -72,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       // identify file where queries are present
 
-      let currOpenEditor: any = vscode.window.activeTextEditor!.document.fileName;
+      let currOpenEditor: string = vscode.window.activeTextEditor!.document.fileName;
       let root = path.dirname(vscode.window.activeTextEditor!.document.fileName);
       while (!fs.existsSync(`${root}/package.json`)) {
         root = path.dirname(root);
@@ -92,6 +92,7 @@ export function activate(context: vscode.ExtensionContext) {
   // push it to the subscriptions
   context.subscriptions.push(disposableActivateGraphQuill);
 
+
   /** **************************************************************************
    * * Second GraphQuill option in the command palette (Cmd Shift P) for deactivating graphquill
   ************************************************************************** */
@@ -105,11 +106,13 @@ export function activate(context: vscode.ExtensionContext) {
       return null;
     }
 
+    console.log('--deactivate graphquill triggered');
+
     // change toggle boolean
     isOnToggle = false;
 
     // dispose of the onDidSaveTextDocument event listener
-    saveListener.dispose();
+    if (saveListener) saveListener.dispose();
 
     // close/hide GraphQuill channel
     graphQuillChannelRef.dispose();
@@ -120,6 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // push it into the subscriptions
   context.subscriptions.push(disposableDisableGraphQuill);
+
 
   /** **************************************************************************
    * * Third GraphQuill option in command palette to toggle graphquill extension
@@ -152,6 +156,6 @@ export function deactivate() {
 
   // TODO pass in port number variable here (may need to use a global variable to
   // TODO  pass it down to this function)
+  console.log('---deactive function called!!');
   return setTimeout(() => serverOff(3000), 1);
-  // console.log('---deactive function called!!');
 }
