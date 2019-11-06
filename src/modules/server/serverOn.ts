@@ -1,27 +1,33 @@
+/**
+ * @module : serverOn.ts
+ * @author : Ed Greenberg
+ * @function : turn on server
+ * @changelog : Ed Greenberg, November 5th, 2019, rewrote to open port on server/index.js
+ * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * * */
+
+
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
 
 const path = require('path');
 const childProcess = require('child_process');
+const fs = require('fs');
 
 
-// I'm assuming that ed will pass in a path here to the entry point
-export default function serverOn(entryPointRelative: string = 'index.js'): Promise<void> {
+const serverOn = () => {
   // moved this line into the serverOn file so that each time serverOn is called
   // a new child process is started. This is critical to being able to toggle
   // GraphQuill on and off
   const terminal = childProcess.spawn('bash');
 
-  // to start the command body, we identify the path of the user's active file
-  // note the bang operator, Typescript feature that lets the program handle
-  // a variable that could potentially be undefined
-  // (without the bang, the file would run locally,
-  // but throws an error upon attempt to upload to the VS Code Marketplace)
-  const temp = vscode.window.activeTextEditor!.document.fileName;
-
-  // next, we truncate to obtain the folder of the active file;
-  // WARNING: for sucess, we must be in the same folder as the server!
-  const base = path.dirname(temp);
+  // we find the root directory by looking up from the active file
+  // ...until we detect a folder with package.json
+  let root = path.dirname(vscode.window.activeTextEditor!.document.fileName);
+  while (!fs.existsSync(`${root}/package.json`)) {
+    root = path.dirname(root);
+    console.log('a root grows: ', root);
+  }
 
   // next, we activate two terminal methods to give us
   // feedback on whether we sucessfully used a child process
@@ -44,13 +50,12 @@ export default function serverOn(entryPointRelative: string = 'index.js'): Promi
   return new Promise((resolve) => {
     // console.log('inside promise');
     setTimeout(() => {
-      console.log('base directory is: ', base);
+      console.log('root: ', root);
       console.log('Sending stdin to terminal');
 
       // this seems to take some time to spin up the server and
       // throws an error with the timing of a fetch
-      terminal.stdin.write(`node ${base}/${entryPointRelative}\n`);
-
+      terminal.stdin.write(`node ${root}/server/index.js\n`);
       console.log('Ending terminal session');
       terminal.stdin.end();
 
@@ -63,6 +68,6 @@ export default function serverOn(entryPointRelative: string = 'index.js'): Promi
   });
 
   // this message pops up to the user upon completion of the command
-}
+};
 
 module.exports = serverOn;

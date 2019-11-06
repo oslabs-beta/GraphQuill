@@ -6,13 +6,13 @@
 
 
 /**
- * @module : parser.ts
+ * @module : readFileSendReqAndWriteResponse.ts
  * @author : Austin Ruby
  * @function : parse string for instances of 'graphQuill' and extract content
  * within parens immediately following each instance
- * @changelog : Alex Chao
- * * Removed server off callback so the server stays open throughout the extension's lifetime.
- * * PORT is killed in extension.ts upon closing vscode.
+ * @changelog : Ed Greenberg, November 5th, 2019, copy out boilerplate function invocation
+ * to query file if not present
+ * @changelog : Alex Chao, November 5th, 2019, merge conflict handling and server additions
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -34,6 +34,13 @@ const extractQueries = require('./extractQueries.js');
 // send request to GraphQL API,
 // and return response to output channel
 function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.OutputChannel) {
+  console.log('inreadFile: ', filePath);
+  const copy = fs.readFileSync(filePath).toString();
+  if (!copy.includes('function graphQuill')) {
+    const newFile = `function graphQuill() {}\n${copy}`;
+    fs.writeFileSync(filePath, newFile);
+  }
+
   // read user's file
   fs.readFile(filePath, (err: Error, data: Buffer) => {
     if (err) {
@@ -63,8 +70,8 @@ function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.Outpu
         })
           .then((response: Response) => response.json())
           .then((thing: Object) => {
-            // console.log('--parsed response is: ', thing, thing.constructor.name);
-            channel.append(`look at this shit: ${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
+            console.log('printed: ', thing);
+            channel.append(`look at this: ${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
             channel.show(true);
           })
           .catch((error: Error) => {
