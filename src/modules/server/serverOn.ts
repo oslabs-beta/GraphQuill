@@ -10,12 +10,12 @@
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
 
-const path = require('path');
+// const path = require('path');
+// const fs = require('fs');
 const childProcess = require('child_process');
-const fs = require('fs');
 
 
-const serverOn = () => {
+const serverOn = (entryPoint: string) => {
   // moved this line into the serverOn file so that each time serverOn is called
   // a new child process is started. This is critical to being able to toggle
   // GraphQuill on and off
@@ -23,11 +23,11 @@ const serverOn = () => {
 
   // we find the root directory by looking up from the active file
   // ...until we detect a folder with package.json
-  let root = path.dirname(vscode.window.activeTextEditor!.document.fileName);
-  while (!fs.existsSync(`${root}/package.json`)) {
-    root = path.dirname(root);
-    console.log('a root grows: ', root);
-  }
+  // let root = path.dirname(vscode.window.activeTextEditor!.document.fileName);
+  // while (!fs.existsSync(`${root}/package.json`)) {
+  //   root = path.dirname(root);
+  //   console.log('a root grows: ', root);
+  // }
 
   // next, we activate two terminal methods to give us
   // feedback on whether we sucessfully used a child process
@@ -53,12 +53,13 @@ const serverOn = () => {
   return new Promise((resolve) => {
     // console.log('inside promise');
     setTimeout(() => {
-      console.log('root: ', root);
-      console.log('Sending stdin to terminal');
+      // console.log('root: ', root);
+      console.log('Sending stdin (node command) to terminal');
 
       // this seems to take some time to spin up the server and
       // throws an error with the timing of a fetch
-      terminal.stdin.write(`node ${root}/server/index.js\n`);
+      // terminal.stdin.write(`node ${root}/server/index.js\n`);
+      terminal.stdin.write(`node ${entryPoint}\n`);
       console.log('Ending terminal session');
       terminal.stdin.end();
 
