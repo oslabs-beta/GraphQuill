@@ -2,7 +2,7 @@
  * @author : Alex Chao
  * @function : return the entryPoint path in a string
  * @param : none
- * @returns : a string with a path to the entry point
+ * @returns : an array with the root directory AND the entryPoint strings
  * @changelog : ##WHOEVER CHANGES THE FILE, date, details
  * * */
 
@@ -13,7 +13,7 @@ import * as vscode from 'vscode';
 const path = require('path');
 const fs = require('fs');
 
-function findEntryPoint() {
+function findRootAndEntryPoint() {
   // identify entryPoint for the file that starts the server
   // search for root directory by finding the package.json file
   let root = path.dirname(vscode.window.activeTextEditor!.document.fileName);
@@ -22,7 +22,7 @@ function findEntryPoint() {
   }
 
   // find config file in root directory
-  const gqConfigFilePath = `${root}/graphquill.config.json`;
+  const gqConfigFilePath = `${root}/graphquill.config.js`;
 
   let entryPoint : string;
   if (fs.existsSync(gqConfigFilePath)) {
@@ -32,10 +32,11 @@ function findEntryPoint() {
     entryPoint = vscode.window.activeTextEditor!.document.fileName;
 
     // notify user that config file was not found and current file is being used as the entry point
-    vscode.window.showInformationMessage(`graphquill.config.json file was not found. ${entryPoint} is being used as the server starting file`);
+    vscode.window.showInformationMessage(`graphquill.config.js file was not found. ${entryPoint} is being used as the server starting file`);
   }
 
-  return entryPoint;
+  // return the array with the two results, to be destrucutred when the function is invoked
+  return [root, entryPoint];
 }
 
-module.exports = findEntryPoint;
+module.exports = findRootAndEntryPoint;

@@ -33,11 +33,15 @@ const extractQueries = require('./extractQueries.js');
 // call helper functions to parse out query string,
 // send request to GraphQL API,
 // and return response to output channel
-function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.OutputChannel) {
+function readFileSendReqAndWriteResponse(
+  filePath: string,
+  channel: vscode.OutputChannel,
+  portNumber: string,
+) {
   console.log('inreadFile: ', filePath);
   const copy = fs.readFileSync(filePath).toString();
   if (!copy.includes('function graphQuill')) {
-    const newFile = `function graphQuill() {}\n${copy}`;
+    const newFile = `function graphQuill() {}\n\n${copy}`;
     fs.writeFileSync(filePath, newFile);
   }
 
@@ -63,7 +67,7 @@ function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.Outpu
 
         // send the fetch to the correct port
         // TODO Ed is working on passing a parsed port number into here?
-        fetch('http://localhost:3000/graphql', {
+        fetch(`http://localhost:${portNumber}/graphql`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: queryMinusQuotes }),

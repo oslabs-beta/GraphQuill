@@ -13,7 +13,8 @@
 	"activationEvents": [
 		"onCommand:extension.activateGraphQuill",
     "onCommand:extension.deactivateGraphQuill",
-    "onCommand:extension.toggleGraphQuill"
+    "onCommand:extension.toggleGraphQuill",
+    "onCommand:extension.createConfigFile"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -29,6 +30,10 @@
       {
         "command": "extension.toggleGraphQuill",
         "title": "GraphQuill: Toggle (Start/Stop)"
+      },
+      {
+        "command": "extension.createConfigFile",
+        "title": "GraphQuill: Create GraphQuill Config File"
       }
 		]
 	},

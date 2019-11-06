@@ -10,12 +10,16 @@
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
 
+// only needed for creating the config file
+const fs = require('fs');
+
+
 /* eslint-disable import/no-unresolved */
 const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse.js');
 const serverOn = require('./modules/server/serverOn.js');
 const serverOff = require('./modules/server/serverOff.js');
 // require in file that returns entryPoint
-const findEntryPoint = require('./modules/client/findEntryPoint.js');
+const findRootAndEntryPoint = require('./modules/client/findRootAndEntryPoint.js');
 // require in file that finds port#
 const findPortNumber = require('./modules/client/findPortNumber.js');
 
@@ -38,8 +42,9 @@ export function activate(context: vscode.ExtensionContext) {
   // a disposable variable to get rid of the save event listener
   let saveListener: vscode.Disposable;
 
-  // set entryPoint to a string of the path to the server startup file (has app.listen)
-  const entryPoint = findEntryPoint();
+  // set rootPath and entryPoint to a string of the path to the server startup file (has app.listen)
+  const [rootPath, entryPoint] = findRootAndEntryPoint();
+  console.log('rootpath is', rootPath);
 
   // set portNumber to a string
   const portNumber = findPortNumber(entryPoint);
@@ -70,25 +75,22 @@ export function activate(context: vscode.ExtensionContext) {
       graphQuillChannelRef = gqChannel;
       // console.log('--channel type is', gqChannel, typeof gqChannel, gqChannel.constructor.name);
 
-      // // identify current document
-      // const currOpenEditor = vscode.window.activeTextEditor;
-      // const currActiveDoc: vscode.TextDocument | undefined = currOpenEditor
-      //   ? currOpenEditor.document
-      //   : undefined;
-      // if (currActiveDoc) {
-      // initailize the saveListener to a variable so it can be disposed of later
-      // !  saveListener = vscode.workspace.onDidSaveTextDocument((event) => {
-      // !    // use this event argument to call to pass the filename into another call of readFile
-      // !    console.log('save event!!!!!', event);
-      // !  });
-      //   readFileSendReqAndWriteResponse(currActiveDoc.fileName, gqChannel);
+      // get the fileName of the open file when the extension is FIRST fired
+      const currOpenEditorPath: string = vscode.window.activeTextEditor!.document.fileName;
+      // send that request from the currentopeneditor
+      readFileSendReqAndWriteResponse(currOpenEditorPath, gqChannel, portNumber);
 
-      // ! !!!!!!!!!
-      // this is not EXACTLY the entry point (it could be though...)
-      const currOpenEditor: string = vscode.window.activeTextEditor!.document.fileName;
+      // initialize the save listener here to clear the channel and resend new requests
+      saveListener = vscode.workspace.onDidSaveTextDocument((event) => {
+        console.log('save event!!!', event);
 
-      readFileSendReqAndWriteResponse(currOpenEditor, gqChannel);
-    }).catch((err: Error) => console.log(err));
+        // clear the graphQuill channel
+        gqChannel.clear();
+
+        // send the filename and channel to the readFileSRAWR function
+        readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber);
+      });
+    }).catch((err: Error) => console.log('Error in serverOn file, error console log in extension.ts', err));
 
     // to satisfy typescript linter...
     return null;
@@ -151,8 +153,40 @@ export function activate(context: vscode.ExtensionContext) {
     return null;
   });
 
-  // push it to the descriptions
+  // push it to the subscriptions
   context.subscriptions.push(disposableToggleGraphQuill);
+
+  /** **************************************************************************
+   * * Fourth GraphQuill option in command palette to CREATE A CONFIG FILE
+   ************************************************************************** */
+  const disposableCreateConfigFile = vscode.commands.registerCommand('extension.createConfigFile', () => {
+    console.log('--config file setup triggered');
+
+    const graphQuillConfigPath = `${rootPath}/graphquill.config.js`;
+    // check if the root directory already has a graphquill.config.json file
+    if (fs.existsSync(graphQuillConfigPath)) {
+      vscode.window.showInformationMessage(`A GraphQuill configuration file already exists at ${graphQuillConfigPath}`);
+      // exit out
+      return null;
+    }
+
+    // if it does not already exist, write to a new file
+    fs.writeFileSync(graphQuillConfigPath,
+      // string to populate the file with
+      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n};\n',
+      'utf-8');
+
+    // open the file in vscode
+    vscode.workspace.openTextDocument(graphQuillConfigPath).then((doc) => {
+      // apparently openTextDocument doesn't mean it's visible...
+      vscode.window.showTextDocument(doc);
+    });
+
+    return null;
+  });
+
+  // push it to the subscriptions
+  context.subscriptions.push(disposableCreateConfigFile);
 }
 
 // this method is called when your extension is deactivated
