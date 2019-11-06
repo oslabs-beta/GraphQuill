@@ -11,15 +11,25 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.graphQuill"
+		"onCommand:extension.activateGraphQuill",
+    "onCommand:extension.deactivateGraphQuill",
+    "onCommand:extension.toggleGraphQuill"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.graphQuill",
-				"title": "graphquill"
-			}
+				"command": "extension.activateGraphQuill",
+				"title": "GraphQuill: Activate"
+			},
+			{
+				"command": "extension.deactivateGraphQuill",
+				"title": "GraphQuill: Deactivate"
+      },
+      {
+        "command": "extension.toggleGraphQuill",
+        "title": "GraphQuill: Toggle (Start/Stop)"
+      }
 		]
 	},
 	"scripts": {
@@ -28,7 +38,8 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
 		"test": "node ./out/test/runTest.js",
-		"parseUnitTest": "mocha -r ts-node/register src/test/suite/parser.test.ts"
+		"parseUnitTest": "mocha -r ts-node/register src/test/suite/parser.test.ts",
+		"serverUnitTest": "mocha -r ts-node/register src/test/suite/server.test.ts"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.4",

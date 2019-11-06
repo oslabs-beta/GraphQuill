@@ -13,9 +13,14 @@ const fs = require('fs');
 const path = require('path');
 const childProcess = require('child_process');
 
-const terminal2 = childProcess.spawn('bash');
+// spawn a new child process that will be used to close the open port
 
-const serverOff = () => {
+const serverOff = (portNumber: Number = 3000) => {
+  console.log('in serveroff function file');
+  // this one also had to be pulled into serverOff so that a new child process is started to
+  // kill the server port
+  const terminal2 = childProcess.spawn('bash');
+
   // we find the root directory by looking up from the active file
   // ...until we detect a folder with package.json
   let root = path.dirname(vscode.window.activeTextEditor!.document.fileName);
@@ -26,12 +31,14 @@ const serverOff = () => {
 
   // const temp = vscode.window.activeTextEditor!.document.fileName;
 
-  terminal2.stdout.on('data', (data: any) => {
+  // write any data/outputs from the terminal to the extension console
+  terminal2.stdout.on('data', (data: Buffer) => {
     console.log(`stdout: ${data}`);
   });
 
-  terminal2.on('exit', (code: any) => {
-    console.log(`child process exited with code ${code}`);
+  // on terminal exit, print the exit code
+  terminal2.on('exit', (code: Number) => {
+    console.log(`terminal2 child process exited with code ${code}`);
   });
 
   // this is a blocking (synchronous) call to the active file, populating 'data' as a string
@@ -43,21 +50,24 @@ const serverOff = () => {
 
   // this next segment is edge case handling for if the port number
   // is separated from the start parentheses by some number of spaces
-  let disp = 0;
-  while (data[lookup + disp + 11] === ' ') {
-    disp += 1;
+  let displace = 0;
+  while (data[lookup + displace + 11] === ' ') {
+    displace += 1;
   }
 
   // in target, we slice the port out of the array (offsetting as required by the edge case test)
-  const target = data.slice(lookup + 11 + disp, lookup + 15 + disp);
+  // eslint-disable-next-line no-unused-vars
+  const target = data.slice(lookup + 11 + displace, lookup + 15 + displace);
 
+  // ? I don't think these need to be delayed... just kill the process
   // in the core of our function, we run a special command that finds and kills the port specified
-  setTimeout(() => {
-    terminal2.stdin.write(`kill $(lsof -t -i:${target})\n`);
-    terminal2.stdin.end();
-  }, 1000);
+  // setTimeout(() => {
+  // terminal2.stdin.write(`kill $(lsof -t -i:${target})\n`);
+  terminal2.stdin.write(`kill $(lsof -t -i:${portNumber})\n`);
+  terminal2.stdin.end();
+  // }, 1);
 
-  vscode.window.showInformationMessage('Your local server should be off.');
+  vscode.window.showInformationMessage('GraphQuill has been turned off');
 };
 
 module.exports = serverOff;

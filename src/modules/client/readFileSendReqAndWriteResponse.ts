@@ -12,7 +12,7 @@
  * within parens immediately following each instance
  * @changelog : Ed Greenberg, November 5th, 2019, copy out boilerplate function invocation
  * to query file if not present
- * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * @changelog : Alex Chao, November 5th, 2019, merge conflict handling and server additions
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -33,9 +33,7 @@ const extractQueries = require('./extractQueries.js');
 // call helper functions to parse out query string,
 // send request to GraphQL API,
 // and return response to output channel
-function readFileSendReqAndWriteResponse(filePath: string,
-  channel: vscode.OutputChannel, callback: any) {
-
+function readFileSendReqAndWriteResponse(filePath: string, channel: vscode.OutputChannel) {
   console.log('inreadFile: ', filePath);
   const copy = fs.readFileSync(filePath).toString();
   if (!copy.includes('function graphQuill')) {
@@ -54,37 +52,38 @@ function readFileSendReqAndWriteResponse(filePath: string,
       // send post request to API/graphql
 
       setTimeout(() => {
-        console.log('IN SET TIMEOUT');
+        // console.log('IN SET TIMEOUT');
+
         // parse off the extra quotes
         const queryMinusQuotes: string = typeof result[1] === 'string'
           ? result[1].slice(1, result[1].length - 1)
           : 'error';
 
-        console.log('query w/o quotes is', queryMinusQuotes);
+        // console.log('query w/o quotes is', queryMinusQuotes);
 
+        // send the fetch to the correct port
+        // TODO Ed is working on passing a parsed port number into here?
         fetch('http://localhost:3000/graphql', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: queryMinusQuotes }),
-        }).then((response: any) => {
-          console.log('response is', response, typeof response);
-          return response.json();
         })
-          .then((thing: any) => {
+          .then((response: Response) => response.json())
+          .then((thing: Object) => {
             console.log('printed: ', thing);
-            channel.append(`look at this: ${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
+            channel.append(`Responses are:\n${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
             channel.show(true);
-            callback(); // serverOff
           })
           .catch((error: Error) => {
-            callback(); // serverOff
-            console.log('fetch catch error: ', error);
+            console.log('fetch catch error: ', error, typeof error, error.constructor.name);
+            channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
           });
-      }, 5000);
+      }, 5000); // TODO BIG UX FIX NEEDED HERE
 
       // then send response back to vscode output channel
-      console.log(result);
-      channel.append(`result: ${result}`);
+      // console.log('parsed queries are', result);
+      // TODO match these up with the correct queries when there are multiple within a single file
+      channel.append(`GraphQuill Queries are:\n${result.filter((e : string|Error) => (typeof e === 'string' ? e.length : 0))}\n`);
       channel.show(true);
     }
   });
