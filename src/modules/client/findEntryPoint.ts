@@ -1,3 +1,7 @@
+// these rules are disabled for the weird require that is inside of the function
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
+
 /**
  * @author : Alex Chao
  * @function : return the entryPoint path in a string
@@ -5,7 +9,6 @@
  * @returns : an array with the root directory AND the entryPoint strings
  * @changelog : ##WHOEVER CHANGES THE FILE, date, details
  * * */
-
 
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';
@@ -19,7 +22,12 @@ function findEntryPoint(rootPath: string) {
 
   let entryPoint : string;
   if (fs.existsSync(gqConfigFilePath)) {
-    entryPoint = `${rootPath + JSON.parse(fs.readFileSync(gqConfigFilePath, 'utf8')).entry}`;
+    // if the config file exists, require it in (will come in as an object)
+    const configObject = require(`${gqConfigFilePath}`);
+
+    // set the entry point to the absolute path (root + relative entry path)
+    // todo this won't work if the path needs to resolve... add path.resolve into this?
+    entryPoint = `${rootPath + configObject.entry}`;
   } else {
     // default it to the current open editor if there is not a config file
     entryPoint = vscode.window.activeTextEditor!.document.fileName;

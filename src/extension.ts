@@ -79,13 +79,8 @@ export function activate(context: vscode.ExtensionContext) {
       isOnToggle = true;
       console.log('serverOn promise resolved');
 
-      // create GraphQuill output channel and show it
-      // const gqChannel = vscode.window.createOutputChannel('GraphQuill');
+      // show output channel
       gqChannel.show(true);
-
-      // pass this reference up to the higher scope
-      // graphQuillChannelRef = gqChannel;
-      // console.log('--channel type is', gqChannel, typeof gqChannel, gqChannel.constructor.name);
 
       // get the fileName of the open file when the extension is FIRST fired
       const currOpenEditorPath: string = vscode.window.activeTextEditor!.document.fileName;
