@@ -151,6 +151,7 @@ export function activate(context: vscode.ExtensionContext) {
     gqChannel.hide();
     gqChannel.clear();
 
+    console.log('in deactivate, the server turned on by graphquill boolean is: ', serverTurnedOnByGraphQuill);
     // invoke server off in this function
     return setTimeout(() => (serverTurnedOnByGraphQuill && serverOff(portNumber)), 1);
   });
