@@ -18,8 +18,11 @@ const fs = require('fs');
 const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse.js');
 const serverOn = require('./modules/server/serverOn.js');
 const serverOff = require('./modules/server/serverOff.js');
-// require in file that returns entryPoint
-const findRootAndEntryPoint = require('./modules/client/findRootAndEntryPoint.js');
+
+// require in file that finds root directory
+const findRootDirectory = require('./modules/client/findRootDirectory.js');
+// require in file that returns entryPoint when given the root path
+const findEntryPoint = require('./modules/client/findEntryPoint.js');
 // require in file that finds port#
 const findPortNumber = require('./modules/client/findPortNumber.js');
 
@@ -43,7 +46,8 @@ export function activate(context: vscode.ExtensionContext) {
   let saveListener: vscode.Disposable;
 
   // set rootPath and entryPoint to a string of the path to the server startup file (has app.listen)
-  const [rootPath, entryPoint] = findRootAndEntryPoint();
+  const rootPath = findRootDirectory();
+  const entryPoint = findEntryPoint(rootPath);
   console.log('rootpath is', rootPath);
 
   // set portNumber to a string

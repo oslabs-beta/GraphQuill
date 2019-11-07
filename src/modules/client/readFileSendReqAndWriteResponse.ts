@@ -58,30 +58,65 @@ function readFileSendReqAndWriteResponse(
       setTimeout(() => {
         // console.log('IN SET TIMEOUT');
 
-        // parse off the extra quotes
-        const queryMinusQuotes: string = typeof result[1] === 'string'
-          ? result[1].slice(1, result[1].length - 1)
-          : 'error';
+        // handle multiple queries in file...
+        // the additional quotes need to be parsed off
+        const queriesWithoutQuotes: (string|false)[] = result.filter(
+          // callback to remove empty string queries (i.e. the function def of graphQuill)
+          (e: string|Error) => (typeof e === 'string' && e.length),
+        ).map(
+          (query: string|Error) => (
+            // should all be strings...
+            typeof query === 'string' && query.slice(1, query.length - 1)
+          ),
+        );
+
+        console.log('--JUST THE QUERIES', queriesWithoutQuotes);
 
         // console.log('query w/o quotes is', queryMinusQuotes);
-
-        // send the fetch to the correct port
-        // TODO Ed is working on passing a parsed port number into here?
-        fetch(`http://localhost:${portNumber}/graphql`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: queryMinusQuotes }),
-        })
-          .then((response: Response) => response.json())
-          .then((thing: Object) => {
-            console.log('printed: ', thing);
-            channel.append(`Responses are:\n${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
-            channel.show(true);
+        queriesWithoutQuotes.forEach((query) => {
+          // send the fetch to the correct port (passed in as a variable)
+          fetch(`http://localhost:${portNumber}/graphql`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query }),
           })
-          .catch((error: Error) => {
-            console.log('fetch catch error: ', error, typeof error, error.constructor.name);
-            channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
-          });
+            .then((response: Response) => response.json())
+            .then((thing: Object) => {
+              console.log('printed: ', thing);
+              // append any graphql response to the output channel
+              channel.append(`\n${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
+              channel.show(true);
+            })
+            .catch((error: Error) => {
+              console.log('fetch catch error: ', error, typeof error, error.constructor.name);
+
+              // print any errors to the output channel
+              channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
+            });
+        });
+
+        // only append this string to the output channel once
+        channel.append('Responses are:');
+        // // send the fetch to the correct port (passed in as a variable)
+        // fetch(`http://localhost:${portNumber}/graphql`, {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ query: queryMinusQuotes }),
+        // })
+        //   .then((response: Response) => response.json())
+        //   .then((thing: Object) => {
+        //     console.log('printed: ', thing);
+        //     // append any graphql response to the output channel
+        //     channel.append(`Responses are:\n${JSON.stringify(thing, null, 2)}`);
+        // may need to stringify to send
+        //     channel.show(true);
+        //   })
+        //   .catch((error: Error) => {
+        //     console.log('fetch catch error: ', error, typeof error, error.constructor.name);
+
+        //     // print any errors to the output channel
+        //     channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
+        //   });
       }, 5000); // TODO BIG UX FIX NEEDED HERE
 
       // then send response back to vscode output channel

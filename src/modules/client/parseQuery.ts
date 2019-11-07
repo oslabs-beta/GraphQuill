@@ -14,7 +14,7 @@ export default function parseQuery(input: string) {
   let openParensCount: number = 0; // balanced parens validation tool
   let closeParensCount: number = 0; // balanced parens valaidation tool
   let index: number = 0; // helps loop through input
-  const stack: string[] = []; // helps determined when query should be passed along
+  const stack: string[] = []; // helps determine when query should be passed along
   while (index < input.length) { // loop input
     if (input[index] === '(') { // check open parens
       openParensCount += 1; // increment relevant counter
@@ -37,9 +37,6 @@ export default function parseQuery(input: string) {
 }
 
 // export default parseQuery;
-
-
-
 
 
 // working...
@@ -66,7 +63,8 @@ export default function parseQuery(input: string) {
 //     if (currentChar === openParen) {
 //       stack.push(currentChar);
 //     } else if (currentChar === closeParen) {
-//       if (!stack.length) return 'unbalanced parens'; // unreachable line of code - Ed fix this too?
+//       if (!stack.length) return 'unbalanced parens'; // unreachable line of code - Ed fix this
+// too?
 //       stack.pop();
 //     }
 //     // add current char to queryString and increment index before next iteration of loop
