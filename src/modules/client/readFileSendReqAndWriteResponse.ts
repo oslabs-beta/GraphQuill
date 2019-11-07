@@ -13,6 +13,8 @@
  * @changelog : Ed Greenberg, November 5th, 2019, copy out boilerplate function invocation
  * to query file if not present
  * @changelog : Alex Chao, November 5th, 2019, merge conflict handling and server additions
+ * @changelog : Alex Chao, November 6th, 2019, dynamic port number for fetching, coming from
+ * the extension.ts file
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -117,7 +119,7 @@ function readFileSendReqAndWriteResponse(
         //     // print any errors to the output channel
         //     channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
         //   });
-      }, 5000); // TODO BIG UX FIX NEEDED HERE
+      }, 2500); // TODO BIG UX FIX NEEDED HERE
 
       // then send response back to vscode output channel
       // console.log('parsed queries are', result);
@@ -127,10 +129,5 @@ function readFileSendReqAndWriteResponse(
     }
   });
 }
-
-// console.log(readFileSendReqAndWriteResponse(`${__dirname}/parseMe.js`))
-
-
-// console.log(findGQ(longTest));
 
 module.exports = readFileSendReqAndWriteResponse;

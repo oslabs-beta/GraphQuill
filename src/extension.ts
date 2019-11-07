@@ -19,6 +19,11 @@ const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendRe
 const serverOn = require('./modules/server/serverOn.js');
 const serverOff = require('./modules/server/serverOff.js');
 
+// TODO checkforrunningserver commented out for now
+// require in new file
+// const checkForRunningServer = require('./modules/server/checkForRunningServer.js');
+
+
 // require in file that finds root directory
 const findRootDirectory = require('./modules/client/findRootDirectory.js');
 // require in file that returns entryPoint when given the root path
@@ -37,7 +42,8 @@ export function activate(context: vscode.ExtensionContext) {
   // * These are some variables that I need to pass between different commands, so they're in
   // * a higher scope
   // this ChannelRef variable will be used to pass the output channel between separate function defs
-  let graphQuillChannelRef: vscode.OutputChannel;
+  // let graphQuillChannelRef: vscode.OutputChannel;
+  const gqChannel = vscode.window.createOutputChannel('GraphQuill');
 
   // a toggle variable that will is true when the server is on
   let isOnToggle = false;
@@ -67,16 +73,18 @@ export function activate(context: vscode.ExtensionContext) {
       return null;
     }
 
+    // check for if a server is already running on that port
+    // TODO add an extra thenable in between these that runs the readfile stuff after
     serverOn(entryPoint).then(() => {
       isOnToggle = true;
       console.log('serverOn promise resolved');
 
       // create GraphQuill output channel and show it
-      const gqChannel = vscode.window.createOutputChannel('GraphQuill');
+      // const gqChannel = vscode.window.createOutputChannel('GraphQuill');
       gqChannel.show(true);
 
       // pass this reference up to the higher scope
-      graphQuillChannelRef = gqChannel;
+      // graphQuillChannelRef = gqChannel;
       // console.log('--channel type is', gqChannel, typeof gqChannel, gqChannel.constructor.name);
 
       // get the fileName of the open file when the extension is FIRST fired
@@ -126,8 +134,8 @@ export function activate(context: vscode.ExtensionContext) {
     if (saveListener) saveListener.dispose();
 
     // close/hide GraphQuill channel
-    graphQuillChannelRef.hide();
-    graphQuillChannelRef.dispose();
+    gqChannel.hide();
+    gqChannel.clear();
 
     // invoke server off in this function
     return setTimeout(() => serverOff(portNumber), 1);
