@@ -40,7 +40,7 @@ function readFileSendReqAndWriteResponse(
   channel: vscode.OutputChannel,
   portNumber: string,
 ) {
-  console.log('inreadFile: ', filePath);
+  // console.log('inreadFile: ', filePath);
   const copy = fs.readFileSync(filePath).toString();
   if (!copy.includes('function graphQuill')) {
     const newFile = `function graphQuill() {}\n\n${copy}`;
@@ -74,6 +74,12 @@ function readFileSendReqAndWriteResponse(
 
         console.log('--JUST THE QUERIES', queriesWithoutQuotes);
 
+
+        // TODO pair up the requests and responses. Right now the responses are coming in a random
+        // TODO order because of async fetches
+
+        // TODO MAKE THIS A PROMISE ALL? or does it not matter because the for loop will send off
+        // TODO all of the fetches simultaneously and just append responses on as they come in...
         // console.log('query w/o quotes is', queryMinusQuotes);
         queriesWithoutQuotes.forEach((query) => {
           // send the fetch to the correct port (passed in as a variable)
@@ -99,27 +105,7 @@ function readFileSendReqAndWriteResponse(
 
         // only append this string to the output channel once
         channel.append('Responses are:');
-        // // send the fetch to the correct port (passed in as a variable)
-        // fetch(`http://localhost:${portNumber}/graphql`, {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ query: queryMinusQuotes }),
-        // })
-        //   .then((response: Response) => response.json())
-        //   .then((thing: Object) => {
-        //     console.log('printed: ', thing);
-        //     // append any graphql response to the output channel
-        //     channel.append(`Responses are:\n${JSON.stringify(thing, null, 2)}`);
-        // may need to stringify to send
-        //     channel.show(true);
-        //   })
-        //   .catch((error: Error) => {
-        //     console.log('fetch catch error: ', error, typeof error, error.constructor.name);
-
-        //     // print any errors to the output channel
-        //     channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
-        //   });
-      }, 2500); // TODO BIG UX FIX NEEDED HERE
+      }, 1); // TODO BIG UX FIX NEEDED HERE
 
       // then send response back to vscode output channel
       // console.log('parsed queries are', result);

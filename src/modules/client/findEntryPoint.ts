@@ -15,6 +15,7 @@ import * as vscode from 'vscode';
 
 // const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
 function findEntryPoint(rootPath: string) {
   // find config file in root directory
@@ -27,7 +28,7 @@ function findEntryPoint(rootPath: string) {
 
     // set the entry point to the absolute path (root + relative entry path)
     // todo this won't work if the path needs to resolve... add path.resolve into this?
-    entryPoint = `${rootPath + configObject.entry}`;
+    entryPoint = path.resolve(rootPath, configObject.entry);
   } else {
     // default it to the current open editor if there is not a config file
     entryPoint = vscode.window.activeTextEditor!.document.fileName;

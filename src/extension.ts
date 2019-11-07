@@ -21,7 +21,7 @@ const serverOff = require('./modules/server/serverOff.js');
 
 // TODO checkforrunningserver commented out for now
 // require in new file
-// const checkForRunningServer = require('./modules/server/checkForRunningServer.js');
+const checkForRunningServer = require('./modules/server/checkForRunningServer.js');
 
 
 // require in file that finds root directory
@@ -55,9 +55,13 @@ export function activate(context: vscode.ExtensionContext) {
   const rootPath = findRootDirectory();
   const entryPoint = findEntryPoint(rootPath);
   console.log('rootpath is', rootPath);
+  console.log('entry point is', entryPoint);
 
   // set portNumber to a string
   const portNumber = findPortNumber(entryPoint);
+  console.log('port number is', portNumber);
+
+  let serverTurnedOnByGraphQuill = false;
 
   /** **********************************************************************************************
    * * The command must be defined in package.json under contributes/commands AND activation events
@@ -65,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
    * The commandId parameter must match the command field in package.json
    * * This is the first GraphQuill option in the command palette for activating GraphQuill
   *********************************************************************************************** */
-  const disposableActivateGraphQuill = vscode.commands.registerCommand('extension.activateGraphQuill', () => {
+  const disposableActivateGraphQuill = vscode.commands.registerCommand('extension.activateGraphQuill', async () => {
     if (isOnToggle) {
       // if server is already running, break out of function by returning null
       console.log('Server is already running');
@@ -73,12 +77,27 @@ export function activate(context: vscode.ExtensionContext) {
       return null;
     }
 
-    // check for if a server is already running on that port
-    // TODO add an extra thenable in between these that runs the readfile stuff after
-    serverOn(entryPoint).then(() => {
-      isOnToggle = true;
-      console.log('serverOn promise resolved');
+    // Check ONCE if the port is open
+    // will resolve to a true or false value
+    const serverOnFromUser = await checkForRunningServer(portNumber, true);
+    console.log('--serverOnFromUser after once check is:', serverOnFromUser);
 
+
+    if (!serverOnFromUser) {
+      serverOn(entryPoint);
+      serverTurnedOnByGraphQuill = await checkForRunningServer(portNumber, false);
+      if (!serverTurnedOnByGraphQuill) {
+        // if this call resolves to false, that means there was an error starting the server
+        // send a message to the user to check their server file
+        // TODO
+        // break out
+        return null;
+      }
+    }
+
+    if (serverOnFromUser || serverTurnedOnByGraphQuill) {
+      // update isOnToggle (refers to state of GraphQuill extension running or not)
+      isOnToggle = true;
       // show output channel
       gqChannel.show(true);
 
@@ -97,7 +116,7 @@ export function activate(context: vscode.ExtensionContext) {
         // send the filename and channel to the readFileSRAWR function
         readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber);
       });
-    }).catch((err: Error) => console.log('Error in serverOn file, error console log in extension.ts', err));
+    }
 
     // to satisfy typescript linter...
     return null;
@@ -133,7 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
     gqChannel.clear();
 
     // invoke server off in this function
-    return setTimeout(() => serverOff(portNumber), 1);
+    return setTimeout(() => (serverTurnedOnByGraphQuill && serverOff(portNumber)), 1);
   });
 
   // push it into the subscriptions
