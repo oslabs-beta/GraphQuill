@@ -3,7 +3,7 @@
 	"displayName": "GraphQuill",
 	"description": "",
 	"publisher": "sproutdeveloping",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.39.0"
 	},
@@ -12,9 +12,9 @@
 	],
 	"activationEvents": [
 		"onCommand:extension.activateGraphQuill",
-    "onCommand:extension.deactivateGraphQuill",
-    "onCommand:extension.toggleGraphQuill",
-    "onCommand:extension.createConfigFile"
+		"onCommand:extension.deactivateGraphQuill",
+		"onCommand:extension.toggleGraphQuill",
+		"onCommand:extension.createConfigFile"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -26,15 +26,15 @@
 			{
 				"command": "extension.deactivateGraphQuill",
 				"title": "GraphQuill: Deactivate"
-      },
-      {
-        "command": "extension.toggleGraphQuill",
-        "title": "GraphQuill: Toggle (Start/Stop)"
-      },
-      {
-        "command": "extension.createConfigFile",
-        "title": "GraphQuill: Create GraphQuill Config File"
-      }
+			},
+			{
+				"command": "extension.toggleGraphQuill",
+				"title": "GraphQuill: Toggle (Start/Stop)"
+			},
+			{
+				"command": "extension.createConfigFile",
+				"title": "GraphQuill: Create GraphQuill Config File"
+			}
 		]
 	},
 	"scripts": {
