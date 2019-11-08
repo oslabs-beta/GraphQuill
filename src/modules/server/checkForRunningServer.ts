@@ -92,6 +92,8 @@ const checkForRunningServer = (portNumber: string, once: boolean) => {
       }
       // increment numRuns for the once conditional test
       numRuns += 1;
+
+      // TODO default setTimeout after 2.5 seconds
     }, 200);
   });
 
