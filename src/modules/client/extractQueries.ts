@@ -14,9 +14,8 @@ function extractQueries(string: string) {
   // iterate over string
   for (let i: number = 0; i < string.length; i += 1) {
     // if current slice of string is 'graphQuill'
-    // push evaluated result of parseQueries passing in
-    // string sliced from current char to end
-    // into queriesArr
+    // then push evaluated result of parseQueries passing in
+    // string sliced from current char to end into queriesArr
     if (string.slice(i, i + gq.length) === gq) {
       queriesArr.push(parseQuery(string.slice(i + gq.length)));
     }
