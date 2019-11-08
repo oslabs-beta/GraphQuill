@@ -1,5 +1,5 @@
 {
-  "extends": "airbnb",
+  "extends": [ "airbnb", "plugin:mocha/recommended"],
   "rules": {
     // "no-param-reassign": "off",
     // "consistent-return": "off",
@@ -8,7 +8,12 @@
     "react/prop-types": "off",
     // "linebreak-style": 0 // windows CRLF LF thing?
     "func-names": "off",
-    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }] // allows for i++ or i-- in third arg of for loop
+    
+    // allows for i++ or i-- in third arg of for loop
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }], 
+    
+    // gets rid of errors like 'chai' should be in project dependencies, not devDependencies, in test.ts/x files ONLY
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.ts", "**/*.test.tsx"]}]
   },
   "env": {
     "browser": true,
@@ -17,12 +22,21 @@
   },
   // below are the settings for typescript linting
   "parser": "@typescript-eslint/parser",
-  "plugins": [ "@typescript-eslint" ],
+  "plugins": [ "@typescript-eslint", "mocha" ],
   "parserOptions": {
     "sourceType": "module",
     "ecmaFeatures": {
       "modules": true
     },
     "project": "./tsconfig.json"
+  },
+
+  // this setting removes the need to constantly ignore the no-unresolved-paths error
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   }
 }
