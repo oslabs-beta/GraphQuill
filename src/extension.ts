@@ -27,7 +27,7 @@ const checkForRunningServer = require('./modules/server/checkForRunningServer.js
 // require in file that finds root directory
 const findRootDirectory = require('./modules/client/findRootDirectory.js');
 // require in file that returns entryPoint when given the root path
-const findEntryPoint = require('./modules/client/findEntryPoint.js');
+const parseConfigFile = require('./modules/client/parseConfigFile.js');
 // require in file that finds port#
 const findPortNumber = require('./modules/client/findPortNumber.js');
 
@@ -53,14 +53,18 @@ export function activate(context: vscode.ExtensionContext) {
 
   // set rootPath and entryPoint to a string of the path to the server startup file (has app.listen)
   const rootPath = findRootDirectory();
-  const entryPoint = findEntryPoint(rootPath);
-  console.log('rootpath is', rootPath);
-  console.log('entry point is', entryPoint);
+  // ! make these mutable and re-check for them where needed...
+  const { entryPoint, allowServerTimeoutConfigSetting } = parseConfigFile(rootPath);
+  // console.log('rootpath is', rootPath);
+  // console.log('entry point is', entryPoint);
+  // console.log('allowerServerTimeout Config Setting is', allowServerTimeoutConfigSetting);
 
+  // ! make these mutable and re-check for them where needed...
   // set portNumber to a string
   const portNumber = findPortNumber(entryPoint);
-  console.log('port number is', portNumber);
+  // console.log('port number is', portNumber);
 
+  // boolean to track if the server has been successfully turned on by the user
   let serverTurnedOnByGraphQuill = false;
 
   /** **********************************************************************************************
@@ -77,34 +81,46 @@ export function activate(context: vscode.ExtensionContext) {
       return null;
     }
 
+    // show output channel
+    gqChannel.show(true);
+
     // Check ONCE if the port is open
     // will resolve to a true or false value
     const serverOnFromUser = await checkForRunningServer(portNumber, true);
     console.log('--serverOnFromUser after once check is:', serverOnFromUser);
 
-
+    // trigger serverOn if the user does not already have the server running
     if (!serverOnFromUser) {
       serverOn(entryPoint);
-      serverTurnedOnByGraphQuill = await checkForRunningServer(portNumber, false);
+
+      // await this function that will return true or false based on if the server has been started
+      // false: if starting the server is longer than the time allotted in the config file (defaults
+      // to 3 seconds)
+      serverTurnedOnByGraphQuill = await checkForRunningServer(portNumber,
+        false, // once setting is false
+        allowServerTimeoutConfigSetting); // allowServerTCS is either a time in ms or undefined
+
+      // if it is false, that means there was an error starting the server
       if (!serverTurnedOnByGraphQuill) {
-        // if this call resolves to false, that means there was an error starting the server
-        // send a message to the user to check their server file
-        // TODO
-        // break out
-        return null;
+        // console.log('server is taking too long to startup');
+
+        // give feedback to user that port didn't start
+        gqChannel.append(`The server is taking too long to startup (>${allowServerTimeoutConfigSetting / 1000} seconds).\nTo increase this time, update the "serverStartupTimeAllowed" setting in the graphquill.config.js file.`);
+
+        // break out, and just in case I'm going to try to kill the port if it did open
+        // otherwise we could get runaway node processes...
+        return setTimeout(() => serverOff(portNumber), 5000);
       }
     }
 
     if (serverOnFromUser || serverTurnedOnByGraphQuill) {
       // update isOnToggle (refers to state of GraphQuill extension running or not)
       isOnToggle = true;
-      // show output channel
-      gqChannel.show(true);
 
       // get the fileName of the open file when the extension is FIRST fired
       const currOpenEditorPath: string = vscode.window.activeTextEditor!.document.fileName;
       // send that request from the currentopeneditor
-      readFileSendReqAndWriteResponse(currOpenEditorPath, gqChannel, portNumber);
+      readFileSendReqAndWriteResponse(currOpenEditorPath, gqChannel, portNumber, rootPath);
 
       // initialize the save listener here to clear the channel and resend new requests
       saveListener = vscode.workspace.onDidSaveTextDocument((event) => {
@@ -114,7 +130,7 @@ export function activate(context: vscode.ExtensionContext) {
         gqChannel.clear();
 
         // send the filename and channel to the readFileSRAWR function
-        readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber);
+        readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber, rootPath);
       });
     }
 
@@ -200,7 +216,7 @@ export function activate(context: vscode.ExtensionContext) {
     // if it does not already exist, write to a new file
     fs.writeFileSync(graphQuillConfigPath,
       // string to populate the file with
-      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n};\n',
+      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
       'utf-8');
 
     // open the file in vscode

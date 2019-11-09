@@ -39,10 +39,15 @@ function readFileSendReqAndWriteResponse(
   filePath: string,
   channel: vscode.OutputChannel,
   portNumber: string,
+  rootPath: string, // passing the root path in to control the function def. injection
 ) {
   // console.log('inreadFile: ', filePath);
+
+  // parse the contents of the entire filePath file to a string
   const copy = fs.readFileSync(filePath).toString();
-  if (!copy.includes('function graphQuill')) {
+  // check if the file is within the root directory, otherwise we don't want to inject the
+  // function defintion
+  if (filePath.includes(rootPath) && !copy.includes('function graphQuill')) {
     const newFile = `function graphQuill() {}\n\n${copy}`;
     fs.writeFileSync(filePath, newFile);
   }
@@ -110,7 +115,7 @@ function readFileSendReqAndWriteResponse(
       // then send response back to vscode output channel
       // console.log('parsed queries are', result);
       // TODO match these up with the correct queries when there are multiple within a single file
-      channel.append(`GraphQuill Queries are:\n${result.filter((e : string|Error) => (typeof e === 'string' ? e.length : 0))}\n`);
+      channel.append(`GraphQuill Queries are:\n${result.filter((e : string|Error) => (typeof e === 'string' ? e.length : false))}\n`);
       channel.show(true);
     }
   });

@@ -1,7 +1,8 @@
 {
 	"name": "graphquill",
 	"displayName": "GraphQuill",
-	"description": "",
+	"description": "Welcome to a new era of GraphQL API devleopment.",
+	"icon": "./out/graphquill-logo.png",
 	"publisher": "sproutdeveloping",
 	"version": "0.4.0",
 	"repository": {
@@ -73,7 +74,6 @@
 		"vscode-test": "^1.2.0"
 	},
 	"dependencies": {
-		"node-fetch": "^2.6.0",
-		"nodemon": "^1.19.4"
+		"node-fetch": "^2.6.0"
 	}
 }

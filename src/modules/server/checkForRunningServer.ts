@@ -2,7 +2,7 @@
  * @module : checkForRunningServer.ts
  * @author : Alex Chao
  * @function : uses child process and lsof to check if a port is currently running
- * @param : pass in an instance of a terminal?????
+ * @param :
  * @changelog : ##WHOEVER CHANGES THE FILE, date, details
  * * */
 
@@ -15,7 +15,11 @@ const childProcess = require('child_process');
 
 // todo remove this rule when the funciton is done...
 // eslint-disable-next-line no-unused-vars
-const checkForRunningServer = (portNumber: string, once: boolean) => {
+const checkForRunningServer = (
+  portNumber: string,
+  once: boolean,
+  allowServerTimeoutConfigSetting: number|undefined,
+) => {
   console.log('CHECK FOR RUNNING SERVER IS RUNNINGGGGGG');
 
   // moved this line into the serverOn file so that each time serverOn is called
@@ -52,6 +56,10 @@ const checkForRunningServer = (portNumber: string, once: boolean) => {
 
   return new Promise((resolve) => {
     let numRuns = 0;
+    let timeoutId: NodeJS.Timer;
+    // A set interval callback that will write a command to the terminal every 200ms, then check
+    // if the portOpen boolean has been changed (it is actually changed in the on-data listener
+    // above). Promise will resolve when the portOpen variable is true
     const intervalWriteBash = setInterval(() => {
       bashTerminal.stdin.write(`lsof -i :${portNumber}\n`);
       // console.log('inside promise-- portOpen boolean', portOpen);
@@ -61,7 +69,8 @@ const checkForRunningServer = (portNumber: string, once: boolean) => {
       if (portOpen) {
         // clear set intervals
         clearInterval(intervalWriteBash);
-        // clearInterval(consoleShit);
+        // clear the timeoutId if it's
+        if (timeoutId) clearTimeout(timeoutId);
 
         // end terminal session
         bashTerminal.stdin.end();
@@ -90,11 +99,30 @@ const checkForRunningServer = (portNumber: string, once: boolean) => {
 
         resolve(portOpen);
       }
+
       // increment numRuns for the once conditional test
       numRuns += 1;
+    }, 200); // Run every 200ms
 
-      // TODO default setTimeout after 2.5 seconds
-    }, 200);
+    // TODO default setTimeout after 2.5 seconds
+    // default/base case to resolve promise if the server hasn't started in 3 seconds
+    // This means the server is either spinning up too slowly or there is an error n the user's
+    // server starting file. In either case we want to return false for the next piece of middleware
+    if (!once) {
+      // only create this default timeout if this function was invoked with once === false
+      timeoutId = setTimeout(() => {
+        console.log('timeout of checkForRunningServer');
+        // clear set intervals
+        clearInterval(intervalWriteBash);
+        // clearInterval(consoleShit);
+
+        // end terminal session
+        bashTerminal.stdin.end();
+
+        // resolve the promise
+        resolve(false);
+      }, allowServerTimeoutConfigSetting || 3000); // default the allowed server timeout to 3 sec.
+    }
   });
 
   // this message pops up to the user upon completion of the command
