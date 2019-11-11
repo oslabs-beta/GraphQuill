@@ -1,6 +1,6 @@
 .vscode/**
 .vscode-test/**
-out/**
+out/test/**
 src/**
 .eslintrc
 .gitignore
