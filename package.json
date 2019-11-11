@@ -4,7 +4,7 @@
 	"description": "Welcome to a new era of GraphQL API devleopment.",
 	"icon": "statics/graphquill-logo.png",
 	"publisher": "sproutdeveloping",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/oslabs-beta/GraphQuill.git"
@@ -44,10 +44,10 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "webpack --mode production",
-    "webpack": "webpack --mode development",
-    "webpack-dev": "webpack --mode development --watch",
-    "test-compile": "tsc -p ./",
-    "compile": "tsc -p ./",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"test-compile": "tsc -p ./",
+		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
 		"test": "node ./out/test/runTest.js",
