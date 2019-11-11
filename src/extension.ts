@@ -18,19 +18,19 @@ const fs = require('fs');
 
 
 /* eslint-disable import/no-unresolved */
-const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse');
-const serverOn = require('./modules/server/serverOn');
-const serverOff = require('./modules/server/serverOff');
+const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse.js');
+const serverOn = require('./modules/server/serverOn.js');
+const serverOff = require('./modules/server/serverOff.js');
 
 // require in new function that checks for a running server
-const checkForRunningServer = require('./modules/server/checkForRunningServer');
+const checkForRunningServer = require('./modules/server/checkForRunningServer.js');
 
 // require in file that finds root directory
-const findRootDirectory = require('./modules/client/findRootDirectory');
+const findRootDirectory = require('./modules/client/findRootDirectory.js');
 // require in file that returns entryPoint when given the root path
-const parseConfigFile = require('./modules/client/parseConfigFile');
+const parseConfigFile = require('./modules/client/parseConfigFile.js');
 // require in file that finds port#
-const findPortNumber = require('./modules/client/findPortNumber');
+const findPortNumber = require('./modules/client/findPortNumber.js');
 
 
 // this method is called when your extension is activated

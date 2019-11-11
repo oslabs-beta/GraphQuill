@@ -1,9 +1,9 @@
 /* eslint-disable import/no-unresolved */
 // import { builtinModules } from 'module';
 
-import parseQuery from './parseQuery';
+import parseQuery from './parseQuery.js';
 
-const useCheckQueryBrackets = require('./checkQueryBrackets');
+const useCheckQueryBrackets = require('./checkQueryBrackets.js');
 
 // given file path, read file at path and parse for instances of 'graphQuill'
 function extractQueries(string: string) {

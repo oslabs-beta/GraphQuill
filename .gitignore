@@ -3,9 +3,6 @@ node_modules
 .vscode-test/
 *.vsix
 
-# webpack output files
-dist/
-
 # Logs
 logs
 *.log
