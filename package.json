@@ -43,8 +43,11 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
+		"vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./",
+    "compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
 		"test": "node ./out/test/runTest.js",
@@ -69,9 +72,12 @@
 		"eslint-plugin-react-hooks": "^1.7.0",
 		"glob": "^7.1.4",
 		"mocha": "^6.1.4",
+		"ts-loader": "^6.2.1",
 		"ts-node": "^8.4.1",
 		"typescript": "^3.3.1",
-		"vscode-test": "^1.2.0"
+		"vscode-test": "^1.2.0",
+		"webpack": "^4.41.2",
+		"webpack-cli": "^3.3.10"
 	},
 	"dependencies": {
 		"node-fetch": "^2.6.0"

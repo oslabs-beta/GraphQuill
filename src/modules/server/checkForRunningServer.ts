@@ -1,8 +1,13 @@
 /**
  * @module : checkForRunningServer.ts
- * @author : Alex Chao
+ * @author : Alex Chao, Nov 7th, 2019
  * @function : uses child process and lsof to check if a port is currently running
- * @param :
+ * @param : portNumber, string
+ * @param : once: boolean, true if the function should check if the port is open right when the
+ * function is run. OR false if the function should wait for the server to start before resolving
+ * @param : allowServerTimeoutConfigSetting: number, user input from config file to determine how
+ * long to wait for the server to start. Defaults to 3000 (milliseconds)
+ * @returns : a boolean, true if the server has started, false if it has not started
  * @changelog : ##WHOEVER CHANGES THE FILE, date, details
  * * */
 
@@ -13,15 +18,13 @@
 // const fs = require('fs');
 const childProcess = require('child_process');
 
-// todo remove this rule when the funciton is done...
-// eslint-disable-next-line no-unused-vars
 const checkForRunningServer = (
   portNumber: string,
   once: boolean,
-  allowServerTimeoutConfigSetting: number|undefined,
+  allowServerTimeoutConfigSetting = 3000,
 ) => {
   console.log('CHECK FOR RUNNING SERVER IS RUNNINGGGGGG');
-
+  // console.log(portNumber, once, allowServerTimeoutConfigSetting);
   // moved this line into the serverOn file so that each time serverOn is called
   // a new child process is started. This is critical to being able to toggle
   // GraphQuill on and off
@@ -48,19 +51,15 @@ const checkForRunningServer = (
   });
 
   // just below is the real core of the function, the child process:
-  // we write to a new terminal to run the index.js file in the folder specified by base
+  // checks if the port is active with the `lsof -i :${portNumber}\n` command
   // IMPORTANT: code will not run without the '\n' component--the CLI needs this
-  // explicit return command
-  // // ! ONCE
-  // bashTerminal.stdin.write(`lsof -i :${portNumber}\n`);
-
   return new Promise((resolve) => {
     let numRuns = 0;
     let timeoutId: NodeJS.Timer;
     // A set interval callback that will write a command to the terminal every 200ms, then check
     // if the portOpen boolean has been changed (it is actually changed in the on-data listener
     // above). Promise will resolve when the portOpen variable is true
-    const intervalWriteBash = setInterval(() => {
+    const intervalLsofToBash = setInterval(() => {
       bashTerminal.stdin.write(`lsof -i :${portNumber}\n`);
       // console.log('inside promise-- portOpen boolean', portOpen);
       // console.log('inside promise-- allTerminalText', allTerminalText);
@@ -68,8 +67,9 @@ const checkForRunningServer = (
       // if the port is open, resolve the promise, return some value...
       if (portOpen) {
         // clear set intervals
-        clearInterval(intervalWriteBash);
-        // clear the timeoutId if it's
+        clearInterval(intervalLsofToBash);
+
+        // clear the timeoutId
         if (timeoutId) clearTimeout(timeoutId);
 
         // end terminal session
@@ -82,17 +82,16 @@ const checkForRunningServer = (
         resolve(true);
       }
 
-      // ? This may be unreachable code depending on how the event loop lines up for the on data
-      // ? command changing the portOpen variable (i.e. the conditional above for if (portOpen) may
-      // ? be triggered without this ever triggereing
-      // if once was set to true, we only want to check if the server is "immediately" on, so
-      // check if once is true, and numRuns is greater than one, then resolve the promise with
-      // the result of portOpen
+      // if once param was set to true, we only want to check if the server is "immediately" on, so
+      // check if once is true, and numRuns is greater than one, then resolve the promise with the
+      // result of portOpen
       if (once && numRuns > 1) {
-        console.log('---once conditional triggered, result will be:', portOpen);
+        console.log('---once conditional triggered, result is:', portOpen);
         // clear set intervals
-        clearInterval(intervalWriteBash);
-        // clearInterval(consoleShit);
+        clearInterval(intervalLsofToBash);
+
+        // clear the timeoutId
+        if (timeoutId) clearTimeout(timeoutId);
 
         // end terminal session
         bashTerminal.stdin.end();
@@ -104,28 +103,24 @@ const checkForRunningServer = (
       numRuns += 1;
     }, 200); // Run every 200ms
 
-    // TODO default setTimeout after 2.5 seconds
     // default/base case to resolve promise if the server hasn't started in 3 seconds
-    // This means the server is either spinning up too slowly or there is an error n the user's
-    // server starting file. In either case we want to return false for the next piece of middleware
+    // This means the server is either spinning up too slowly or there is an error in the user's
+    // server starting file. In either case we want to return false
     if (!once) {
       // only create this default timeout if this function was invoked with once === false
       timeoutId = setTimeout(() => {
         console.log('timeout of checkForRunningServer');
         // clear set intervals
-        clearInterval(intervalWriteBash);
-        // clearInterval(consoleShit);
+        clearInterval(intervalLsofToBash);
 
         // end terminal session
         bashTerminal.stdin.end();
 
         // resolve the promise
         resolve(false);
-      }, allowServerTimeoutConfigSetting || 3000); // default the allowed server timeout to 3 sec.
+      }, allowServerTimeoutConfigSetting); // default allowed time is 3 sec.
     }
   });
-
-  // this message pops up to the user upon completion of the command
 };
 
 module.exports = checkForRunningServer;

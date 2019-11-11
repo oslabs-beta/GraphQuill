@@ -4,7 +4,6 @@
 // for vscode module being dumb
 /* eslint-disable no-unused-vars */
 
-
 /**
  * @module : readFileSendReqAndWriteResponse.ts
  * @author : Austin Ruby
@@ -23,9 +22,7 @@ import * as vscode from 'vscode';
 const fetch = require('node-fetch');
 const fs = require('fs');
 
-// const checkQueryBrackets = require('./checkQueryBrackets.js');
-// const parseQuery = require('./parseQuery.js');
-const extractQueries = require('./extractQueries.js');
+const extractQueries = require('./extractQueries');
 
 // checkQueryBrackets used to be here
 // parseQuery used to be here
