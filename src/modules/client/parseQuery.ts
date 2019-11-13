@@ -21,7 +21,7 @@ module.exports = function parseQuery(input: string) {
       stack.push(input[index]); // add to stack
     } else if (input[index] === ')') { // check closed parens
       if (stack.length === 0) { // if stack is empty and we have a closed, we have a problem
-        return 'unbalanced parens';
+        return 'unbalanced parens by closed';
       }
       closeParensCount += 1; // increment relevant counter
       stack.pop(); // closed parens eliminates open parens on stack
