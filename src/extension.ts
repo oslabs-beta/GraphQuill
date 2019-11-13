@@ -15,8 +15,6 @@ import * as vscode from 'vscode';
 // only needed for creating the config file
 const fs = require('fs');
 
-
-/* eslint-disable import/no-unresolved */
 const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse');
 const serverOn = require('./modules/server/serverOn');
 const serverOff = require('./modules/server/serverOff');

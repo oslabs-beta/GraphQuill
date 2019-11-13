@@ -22,7 +22,7 @@ import * as vscode from 'vscode';
 const fetch = require('node-fetch');
 const fs = require('fs');
 
-const extractQueries = require('./extractQueries.js');
+const extractQueries = require('./extractQueries');
 
 // checkQueryBrackets used to be here
 // parseQuery used to be here
