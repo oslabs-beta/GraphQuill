@@ -15,7 +15,7 @@ const childProcess = require('child_process');
 
 // spawn a new child process that will be used to close the open port
 
-const serverOff = (portNumber: Number) => {
+const serverOff = (portNumber: string) => {
   console.log('in serveroff function file');
   // this one also had to be pulled into serverOff so that a new child process is started to
   // kill the server port

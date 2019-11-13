@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 // import { builtinModules } from 'module';
 
-import parseQuery from './parseQuery.js';
+const parseQuery = require('./parseQuery.js');
 
 const useCheckQueryBrackets = require('./checkQueryBrackets.js');
 

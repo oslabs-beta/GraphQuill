@@ -28,14 +28,18 @@ function parseConfigFile(rootPath: string) {
 
   let entryPoint : string;
   let allowServerTimeoutConfigSetting : number|undefined;
+  let portNumber: string;
 
   if (fs.existsSync(gqConfigFilePath)) {
     // if the config file exists, require it in (will come in as an object)
     const configObject = require(`${gqConfigFilePath}`);
-    // console.log('config object in parseconfigfile.ts', configObject);
+    console.log('config object in parseconfigfile.ts', configObject);
 
     // set the entry point to the absolute path (root + relative entry path)
     entryPoint = path.resolve(rootPath, configObject.entry);
+
+    // set the portnumber
+    portNumber = configObject.portNumber;
 
     // set the servertimeout config setting
     allowServerTimeoutConfigSetting = configObject.serverStartupTimeAllowed;
@@ -43,6 +47,7 @@ function parseConfigFile(rootPath: string) {
     // if config file is not found, return an empty string,
     // error handle on the other side
     entryPoint = '';
+    portNumber = '';
 
     // ! This will be handled in the outer extension.ts file to notify the user and break out of
     // ! the thread of execution at the same time
@@ -52,7 +57,7 @@ function parseConfigFile(rootPath: string) {
   }
 
   // return the array with the two results, to be destrucutred when the function is invoked
-  return { entryPoint, allowServerTimeoutConfigSetting };
+  return { entryPoint, portNumber, allowServerTimeoutConfigSetting };
 }
 
 module.exports = parseConfigFile;

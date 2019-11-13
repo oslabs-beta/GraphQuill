@@ -11,17 +11,31 @@ import { expect } from 'chai';
 import 'mocha';
 
 const parseQuery = require('../../modules/client/parseQuery');
+const checkQueryBrackets = require('../../modules/client/checkQueryBrackets');
+// const findRootDirectory = require('../../modules/client/findRootDirectory');
+// const parseConfigFile = require('../../modules/client/parseConfigFile');
+
+// readFileSRWR tests on hold because vs code extension testing suite is weird
 
 // I believe mocha uses the "this" keyboard a lot, so that's why these should NOT be arrow functions
-describe('Testing parseQuery function', function () {
-  it('should return the inputted query if it has balanced parens', function () {
-    const result = parseQuery('(this has balanced parens())');
-    expect(result).to.equal('(this has balanced parens())');
+describe('Testing all parsing functions', function () {
+  describe('Testing parseQuery', function () {
+    it('should return the inputted query if it has balanced parens', function () {
+      const result = parseQuery('(this has balanced parens())');
+      expect(result).to.equal('(this has balanced parens())');
+    });
+
+    // this test is kind of confusing... ed please fix it
+    it('should return \'unbalanced parens\' if the query has unbalanced parens', function () {
+      const result = parseQuery('(unbalanced()) parens)');
+      expect(result).to.equal('unbalanced parens');
+    });
   });
 
-  // this test is kind of confusing... ed please fix it
-  it('should return \'unbalanced parens\' if the query has unbalanced parens', function () {
-    const result = parseQuery('(unbalanced()) parens)');
-    expect(result).to.equal('unbalanced parens');
+  // testing the checkQueryBrackets function...
+  describe('Testing checkQueryBrackets', function () {
+    it('should be a function', function () {
+      expect(typeof checkQueryBrackets).to.equal('function');
+    });
   });
 });

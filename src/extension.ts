@@ -5,7 +5,6 @@
  * @changelog : Alex Chao, Nov. 5th-10th 2019... Lots of changes... server listener added
  * - config file setup command made
  *   - config file option to allow for a longer time for the graphql server to startup
- * ! I propose we add the PORT number to config file
  * - updating variables in the event of changes in the config files
  * @changelog : ## Austin?
  * * */
@@ -18,9 +17,9 @@ const fs = require('fs');
 
 
 /* eslint-disable import/no-unresolved */
-const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse.js');
-const serverOn = require('./modules/server/serverOn.js');
-const serverOff = require('./modules/server/serverOff.js');
+const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse');
+const serverOn = require('./modules/server/serverOn');
+const serverOff = require('./modules/server/serverOff');
 
 // require in new function that checks for a running server
 const checkForRunningServer = require('./modules/server/checkForRunningServer.js');
@@ -29,9 +28,6 @@ const checkForRunningServer = require('./modules/server/checkForRunningServer.js
 const findRootDirectory = require('./modules/client/findRootDirectory.js');
 // require in file that returns entryPoint when given the root path
 const parseConfigFile = require('./modules/client/parseConfigFile.js');
-// require in file that finds port#
-const findPortNumber = require('./modules/client/findPortNumber.js');
-
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -83,6 +79,9 @@ export function activate(context: vscode.ExtensionContext) {
     let parseResult = parseConfigFile(rootPath);
     entryPoint = parseResult.entryPoint;
     allowServerTimeoutConfigSetting = parseResult.allowServerTimeoutConfigSetting;
+    portNumber = parseResult.portNumber;
+
+    console.log('parseResults', parseResult, entryPoint, allowServerTimeoutConfigSetting, portNumber);
 
     // if the entryPoint is falsey, break out of the function and tell the
     // user to create a config file
@@ -91,10 +90,6 @@ export function activate(context: vscode.ExtensionContext) {
       // break out of this execution context
       return null;
     }
-
-    // ! remove after config file is setup
-    // set the portNumber (in the higher scope so it can be used in the deactivate function)
-    portNumber = findPortNumber(entryPoint);
 
     // Check ONCE if the port is open (also this does not need the third param)
     // will resolve to a true or false value
@@ -161,18 +156,13 @@ export function activate(context: vscode.ExtensionContext) {
         parseResult = parseConfigFile(rootPath);
         entryPoint = parseResult.entryPoint;
         allowServerTimeoutConfigSetting = parseResult.allowServerTimeoutConfigSetting;
+        portNumber = parseResult.portNumber;
 
         if (!entryPoint) {
           gqChannel.append('The config file was not found, please use the Create GraphQuill Config File Command to make one.');
           // break out of this execution context
           return null;
         }
-
-        // ! I really think we should add the port number to the config file to specify to the user
-        // ! That the port number SHUOLD not be changed...
-        // TODO this seems very redundant... but I'm blanking on how to make this dynamic
-        // ! on each save... reparse for a portNumber in case if it was changed
-        portNumber = findPortNumber(entryPoint);
 
         // send the filename and channel to the readFileSRAWR function
         readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber, rootPath);
@@ -264,7 +254,7 @@ export function activate(context: vscode.ExtensionContext) {
     // if it does not already exist, write to a new file
     fs.writeFileSync(graphQuillConfigPath,
       // string to populate the file with
-      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
+      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n\n  // change 3000 to the port number that your server runs on\n  portNumber: \'3000\',\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
       'utf-8');
 
     // open the file in vscode
