@@ -70,6 +70,7 @@ function readFileSendReqAndWriteResponse(
         ).map(
           (query: string|Error) => (
             // should all be strings...
+            // remove extra quotes
             typeof query === 'string' && query.slice(1, query.length - 1)
           ),
         );
@@ -107,11 +108,12 @@ function readFileSendReqAndWriteResponse(
 
         // only append this string to the output channel once
         channel.append('Responses are:');
-      }, 1); // TODO BIG UX FIX NEEDED HERE
+      }, 1);
 
       // then send response back to vscode output channel
       // console.log('parsed queries are', result);
       // TODO match these up with the correct queries when there are multiple within a single file
+      // TODO still the promise all thing
       channel.append(`GraphQuill Queries are:\n${result.filter((e : string|Error) => (typeof e === 'string' ? e.length : false))}\n`);
       channel.show(true);
     }

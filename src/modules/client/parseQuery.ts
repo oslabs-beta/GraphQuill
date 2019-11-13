@@ -7,7 +7,7 @@
 
 
 // add characters to string while within parentheses
-export default function parseQuery(input: string) {
+module.exports = function parseQuery(input: string) {
   let queryString: string = ''; // string to be checked for balanced parens
   let passedQueryString: string = ''; // string to be passed along
   let closer: boolean = false; // trip to prevent passed along string from overwriting
@@ -34,4 +34,4 @@ export default function parseQuery(input: string) {
     index += 1;
   }
   return openParensCount === closeParensCount ? passedQueryString : 'unbalanced parens';
-}
+};

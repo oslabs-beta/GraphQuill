@@ -92,6 +92,7 @@ export function activate(context: vscode.ExtensionContext) {
       return null;
     }
 
+    // ! remove after config file is setup
     // set the portNumber (in the higher scope so it can be used in the deactivate function)
     portNumber = findPortNumber(entryPoint);
 
@@ -170,8 +171,7 @@ export function activate(context: vscode.ExtensionContext) {
         // ! I really think we should add the port number to the config file to specify to the user
         // ! That the port number SHUOLD not be changed...
         // TODO this seems very redundant... but I'm blanking on how to make this dynamic
-        // TODO update if the user changes their server file...
-        // on each save... reparse for a portNumber in case if it was changed
+        // ! on each save... reparse for a portNumber in case if it was changed
         portNumber = findPortNumber(entryPoint);
 
         // send the filename and channel to the readFileSRAWR function
@@ -284,12 +284,10 @@ export function activate(context: vscode.ExtensionContext) {
 // this method is called when your extension is deactivated
 export function deactivate() {
   // deactivate must return a promise if cleanup operations are async.
-  // turn the server off if vscode is closed (tested via lsof in terminal)
 
   // console.log('---deactive function called!!');
 
   // executing the deactivateGQ command seems to achieve a similar effect & is nice because it has
   // access to the portNumber variable
   vscode.commands.executeCommand('extension.deactivateGraphQuill');
-  // return setTimeout(() => serverOff(3000), 1);
 }

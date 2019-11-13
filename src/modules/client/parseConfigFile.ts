@@ -40,7 +40,8 @@ function parseConfigFile(rootPath: string) {
     // set the servertimeout config setting
     allowServerTimeoutConfigSetting = configObject.serverStartupTimeAllowed;
   } else {
-    // default it to the current open editor if there is not a config file
+    // if config file is not found, return an empty string,
+    // error handle on the other side
     entryPoint = '';
 
     // ! This will be handled in the outer extension.ts file to notify the user and break out of
