@@ -100,7 +100,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       // give user feedback that server is starting up
       gqChannel.clear();
-      gqChannel.append('The server is starting up...');
+      gqChannel.append('The server is starting up...\n');
 
       // await this function that will return true or false based on if the server has been started
       // false: if starting the server is longer than the time allotted in the config file (defaults
@@ -248,7 +248,7 @@ export function activate(context: vscode.ExtensionContext) {
     // if it does not already exist, write to a new file
     fs.writeFileSync(graphQuillConfigPath,
       // string to populate the file with
-      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n\n  // change 3000 to the port number that your server runs on\n  portNumber: \'3000\',\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
+      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n\n  // change 3000 to the port number that your server runs on\n  portNumber: 3000,\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
       'utf-8');
 
     // open the file in vscode
