@@ -71,8 +71,9 @@ export function activate(context: vscode.ExtensionContext) {
       return null;
     }
 
-    // show output channel
+    // show output channel, clear any old stuff off of it
     gqChannel.show(true);
+    gqChannel.clear();
 
     // parse the config file
     let parseResult = parseConfigFile(rootPath);
@@ -96,8 +97,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     // trigger serverOn if the user does not already have the server running
     if (!serverOnFromUser) {
-      // start up the user's server
-      serverOn(entryPoint);
+      // start up the user's server, pass in the gqChannel to log any error messages
+      serverOn(entryPoint, gqChannel);
 
       // give user feedback that server is starting up
       gqChannel.clear();
@@ -134,9 +135,6 @@ export function activate(context: vscode.ExtensionContext) {
     if (serverOnFromUser || serverTurnedOnByGraphQuill) {
       // update isOnToggle (refers to state of GraphQuill extension running or not)
       isOnToggle = true;
-
-      // clear any other stuff off of the channel (e.g. previous error message)
-      gqChannel.clear();
 
       // get the fileName of the open file when the extension is FIRST fired
       const currOpenEditorPath: string = vscode.window.activeTextEditor!.document.fileName;

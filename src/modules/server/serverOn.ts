@@ -3,7 +3,8 @@
  * @author : Ed Greenberg
  * @function : turn on server
  * @changelog : Ed Greenberg, November 5th, 2019, rewrote to open port on server/index.js
- * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * @changelog : Alex Chao, November 13th, 2019, error messages from node piped to output channel
+ * @changelog : whoever's next...
  * * */
 
 
@@ -15,7 +16,7 @@ import * as vscode from 'vscode';
 const childProcess = require('child_process');
 
 
-const serverOn = (entryPoint: number) => {
+const serverOn = (entryPoint: number, gqChannel: vscode.OutputChannel) => {
   // moved this line into the serverOn file so that each time serverOn is called
   // a new child process is started. This is critical to being able to toggle
   // GraphQuill on and off
@@ -33,10 +34,13 @@ const serverOn = (entryPoint: number) => {
   // feedback on whether we sucessfully used a child process
   // note the Typescript (: any) used to handle unknown data inputs
   terminal.stdout.on('data', (data: Buffer) => {
-    // todo add validation, if there is an error that is logged here, it's coming from node
-    // todo and should be piped to the channel as well
-    // todo this may require passing in the channel to the serverOn function...
     console.log(`stdout from terminal: ${data}`);
+    if (data.toString().includes('ERR')) {
+      // error was emitted from the bash child process
+      // put it onto the channel
+      // console.log('NODE ERROR', data.toString());
+      gqChannel.append(`\n\nERROR TRYING TO START THE SERVER\n\n${data.toString()}`);
+    }
     // console.log('---data type is', data.constructor.name);
   });
 
