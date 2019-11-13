@@ -4,7 +4,6 @@
 // for vscode module being dumb
 /* eslint-disable no-unused-vars */
 
-
 /**
  * @module : readFileSendReqAndWriteResponse.ts
  * @author : Austin Ruby
@@ -23,8 +22,6 @@ import * as vscode from 'vscode';
 const fetch = require('node-fetch');
 const fs = require('fs');
 
-// const checkQueryBrackets = require('./checkQueryBrackets.js');
-// const parseQuery = require('./parseQuery.js');
 const extractQueries = require('./extractQueries.js');
 
 // checkQueryBrackets used to be here
@@ -39,10 +36,15 @@ function readFileSendReqAndWriteResponse(
   filePath: string,
   channel: vscode.OutputChannel,
   portNumber: string,
+  rootPath: string, // passing the root path in to control the function def. injection
 ) {
   // console.log('inreadFile: ', filePath);
+
+  // parse the contents of the entire filePath file to a string
   const copy = fs.readFileSync(filePath).toString();
-  if (!copy.includes('function graphQuill')) {
+  // check if the file is within the root directory, otherwise we don't want to inject the
+  // function defintion
+  if (filePath.includes(rootPath) && !copy.includes('function graphQuill')) {
     const newFile = `function graphQuill() {}\n\n${copy}`;
     fs.writeFileSync(filePath, newFile);
   }
@@ -68,6 +70,7 @@ function readFileSendReqAndWriteResponse(
         ).map(
           (query: string|Error) => (
             // should all be strings...
+            // remove extra quotes
             typeof query === 'string' && query.slice(1, query.length - 1)
           ),
         );
@@ -105,12 +108,13 @@ function readFileSendReqAndWriteResponse(
 
         // only append this string to the output channel once
         channel.append('Responses are:');
-      }, 1); // TODO BIG UX FIX NEEDED HERE
+      }, 1);
 
       // then send response back to vscode output channel
       // console.log('parsed queries are', result);
       // TODO match these up with the correct queries when there are multiple within a single file
-      channel.append(`GraphQuill Queries are:\n${result.filter((e : string|Error) => (typeof e === 'string' ? e.length : 0))}\n`);
+      // TODO still the promise all thing
+      channel.append(`GraphQuill Queries are:\n${result.filter((e : string|Error) => (typeof e === 'string' ? e.length : false))}\n`);
       channel.show(true);
     }
   });
