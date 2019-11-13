@@ -19,7 +19,7 @@
 const childProcess = require('child_process');
 
 const checkForRunningServer = (
-  portNumber: string,
+  portNumber: number,
   once: boolean,
   allowServerTimeoutConfigSetting = 3000,
 ) => {

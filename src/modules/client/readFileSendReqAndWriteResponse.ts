@@ -35,7 +35,7 @@ const extractQueries = require('./extractQueries.js');
 function readFileSendReqAndWriteResponse(
   filePath: string,
   channel: vscode.OutputChannel,
-  portNumber: string,
+  portNumber: number,
   rootPath: string, // passing the root path in to control the function def. injection
 ) {
   // console.log('inreadFile: ', filePath);

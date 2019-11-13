@@ -15,7 +15,7 @@ import * as vscode from 'vscode';
 const childProcess = require('child_process');
 
 
-const serverOn = (entryPoint: string) => {
+const serverOn = (entryPoint: number) => {
   // moved this line into the serverOn file so that each time serverOn is called
   // a new child process is started. This is critical to being able to toggle
   // GraphQuill on and off

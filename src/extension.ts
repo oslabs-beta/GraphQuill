@@ -22,12 +22,12 @@ const serverOn = require('./modules/server/serverOn');
 const serverOff = require('./modules/server/serverOff');
 
 // require in new function that checks for a running server
-const checkForRunningServer = require('./modules/server/checkForRunningServer.js');
+const checkForRunningServer = require('./modules/server/checkForRunningServer');
 
 // require in file that finds root directory
-const findRootDirectory = require('./modules/client/findRootDirectory.js');
+const findRootDirectory = require('./modules/client/findRootDirectory');
 // require in file that returns entryPoint when given the root path
-const parseConfigFile = require('./modules/client/parseConfigFile.js');
+const parseConfigFile = require('./modules/client/parseConfigFile');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -51,9 +51,8 @@ export function activate(context: vscode.ExtensionContext) {
   // activating the extension. I'm moving them to be able to manage "live" changes
   let entryPoint: string;
   let allowServerTimeoutConfigSetting: number;
+  let portNumber: number; // portNumber will also come from the config file
 
-  // set portNumber to a string. It is going to be set in the activation command
-  let portNumber: string;
 
   // boolean to track if the server has been successfully turned on by the user
   let serverTurnedOnByGraphQuill = false;
@@ -75,18 +74,17 @@ export function activate(context: vscode.ExtensionContext) {
     // show output channel
     gqChannel.show(true);
 
-    // parse the config file (this is important in case if there were any changes)
+    // parse the config file
     let parseResult = parseConfigFile(rootPath);
-    entryPoint = parseResult.entryPoint;
+    entryPoint = parseResult.entryPoint; // will return the found entry point or an empty string
     allowServerTimeoutConfigSetting = parseResult.allowServerTimeoutConfigSetting;
-    portNumber = parseResult.portNumber;
+    portNumber = parseResult.portNumber; // will return the found port number or zero if not found
 
-    console.log('parseResults', parseResult, entryPoint, allowServerTimeoutConfigSetting, portNumber);
+    // console.log('parseResults', parseResult);
 
-    // if the entryPoint is falsey, break out of the function and tell the
-    // user to create a config file
-    if (!entryPoint) {
-      gqChannel.append('The config file was not found, please use the Create GraphQuill Config File Command to make one.');
+    // if the entryPoint is falsey, break out and tell the user to create a config file
+    if (!entryPoint || !portNumber) {
+      gqChannel.append('The config file was not found or had an error, please use the Create GraphQuill Config File Command to make one.');
       // break out of this execution context
       return null;
     }
