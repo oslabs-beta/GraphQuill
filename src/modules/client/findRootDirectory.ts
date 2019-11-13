@@ -1,5 +1,5 @@
 /**
- * @author : Alex Chao
+ * @author : Alex Chao Nov 7th, 2019. Modularized
  * @function : return the root directory path in a string
  * @param : none
  * @returns : string of the root directory
