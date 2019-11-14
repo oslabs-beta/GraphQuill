@@ -41,7 +41,7 @@ describe('Testing all parsing functions', function () {
       expect(result).to.equal('()');
     });
 
-    it('should return the inputted query if it has balanced parens', function () {
+    it('should return the input query if it has balanced parens', function () {
       const result = parseQuery('(this has balanced parens())');
       expect(result).to.equal('(this has balanced parens())');
     });
@@ -87,6 +87,22 @@ describe('Testing all parsing functions', function () {
       const result = extractQueries('graphQuill(`\n{customer(id: 1) { lastName }\n}\n`);');
       expect(result[0]).to.equal('`\n{customer(id: 1) { lastName }\n}\n`');
     });
+
+    it('should extract first of two queries', function () {
+      const result = extractQueries('graphQuill(`\n{customer(id: 1) { lastName }\n}\n`);\ngraphQuill(`\n{customer(id: 2) { lastName }\n}\n`);');
+      expect(result[0]).to.equal('`\n{customer(id: 1) { lastName }\n}\n`');
+    });
+
+    it('should extract second of two queries', function () {
+      const result = extractQueries('graphQuill(`\n{customer(id: 1) { lastName }\n}\n`);\ngraphQuill(`\n{customer(id: 2) { lastName }\n}\n`);');
+      expect(result[1]).to.equal('`\n{customer(id: 2) { lastName }\n}\n`');
+    });
+
+    it('no queries should return empty array', function () {
+      const result = extractQueries('grap`);');
+      expect(result).to.deep.equal([]);
+    });
+
   });
 
 });
