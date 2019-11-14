@@ -15,19 +15,17 @@ import * as vscode from 'vscode';
 // only needed for creating the config file
 const fs = require('fs');
 
-
-/* eslint-disable import/no-unresolved */
 const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse');
 const serverOn = require('./modules/server/serverOn');
 const serverOff = require('./modules/server/serverOff');
 
 // require in new function that checks for a running server
-const checkForRunningServer = require('./modules/server/checkForRunningServer.js');
+const checkForRunningServer = require('./modules/server/checkForRunningServer');
 
 // require in file that finds root directory
-const findRootDirectory = require('./modules/client/findRootDirectory.js');
+const findRootDirectory = require('./modules/client/findRootDirectory');
 // require in file that returns entryPoint when given the root path
-const parseConfigFile = require('./modules/client/parseConfigFile.js');
+const parseConfigFile = require('./modules/client/parseConfigFile');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -51,9 +49,8 @@ export function activate(context: vscode.ExtensionContext) {
   // activating the extension. I'm moving them to be able to manage "live" changes
   let entryPoint: string;
   let allowServerTimeoutConfigSetting: number;
+  let portNumber: number; // portNumber will also come from the config file
 
-  // set portNumber to a string. It is going to be set in the activation command
-  let portNumber: string;
 
   // boolean to track if the server has been successfully turned on by the user
   let serverTurnedOnByGraphQuill = false;
@@ -72,21 +69,21 @@ export function activate(context: vscode.ExtensionContext) {
       return null;
     }
 
-    // show output channel
+    // show output channel, clear any old stuff off of it
     gqChannel.show(true);
+    gqChannel.clear();
 
-    // parse the config file (this is important in case if there were any changes)
+    // parse the config file
     let parseResult = parseConfigFile(rootPath);
-    entryPoint = parseResult.entryPoint;
+    entryPoint = parseResult.entryPoint; // will return the found entry point or an empty string
     allowServerTimeoutConfigSetting = parseResult.allowServerTimeoutConfigSetting;
-    portNumber = parseResult.portNumber;
+    portNumber = parseResult.portNumber; // will return the found port number or zero if not found
 
-    console.log('parseResults', parseResult, entryPoint, allowServerTimeoutConfigSetting, portNumber);
+    // console.log('parseResults', parseResult);
 
-    // if the entryPoint is falsey, break out of the function and tell the
-    // user to create a config file
-    if (!entryPoint) {
-      gqChannel.append('The config file was not found, please use the Create GraphQuill Config File Command to make one.');
+    // if the entryPoint is falsey, break out and tell the user to create a config file
+    if (!entryPoint || !portNumber) {
+      gqChannel.append('The config file was not found or had an error, please use the Create GraphQuill Config File Command to make one.');
       // break out of this execution context
       return null;
     }
@@ -98,12 +95,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     // trigger serverOn if the user does not already have the server running
     if (!serverOnFromUser) {
-      // start up the user's server
-      serverOn(entryPoint);
+      // start up the user's server, pass in the gqChannel to log any error messages
+      serverOn(entryPoint, gqChannel);
 
       // give user feedback that server is starting up
       gqChannel.clear();
-      gqChannel.append('The server is starting up...');
+      gqChannel.append('The server is starting up...\n');
 
       // await this function that will return true or false based on if the server has been started
       // false: if starting the server is longer than the time allotted in the config file (defaults
@@ -136,9 +133,6 @@ export function activate(context: vscode.ExtensionContext) {
     if (serverOnFromUser || serverTurnedOnByGraphQuill) {
       // update isOnToggle (refers to state of GraphQuill extension running or not)
       isOnToggle = true;
-
-      // clear any other stuff off of the channel (e.g. previous error message)
-      gqChannel.clear();
 
       // get the fileName of the open file when the extension is FIRST fired
       const currOpenEditorPath: string = vscode.window.activeTextEditor!.document.fileName;
@@ -254,7 +248,7 @@ export function activate(context: vscode.ExtensionContext) {
     // if it does not already exist, write to a new file
     fs.writeFileSync(graphQuillConfigPath,
       // string to populate the file with
-      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n\n  // change 3000 to the port number that your server runs on\n  portNumber: \'3000\',\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
+      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n\n  // change 3000 to the port number that your server runs on\n  portNumber: 3000,\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
       'utf-8');
 
     // open the file in vscode

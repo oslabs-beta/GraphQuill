@@ -28,7 +28,7 @@ function parseConfigFile(rootPath: string) {
 
   let entryPoint : string;
   let allowServerTimeoutConfigSetting : number|undefined;
-  let portNumber: string;
+  let portNumber: number;
 
   if (fs.existsSync(gqConfigFilePath)) {
     // if the config file exists, require it in (will come in as an object)
@@ -47,16 +47,16 @@ function parseConfigFile(rootPath: string) {
     // if config file is not found, return an empty string,
     // error handle on the other side
     entryPoint = '';
-    portNumber = '';
+    portNumber = 0;
 
-    // ! This will be handled in the outer extension.ts file to notify the user and break out of
-    // ! the thread of execution at the same time
+    // * This will be handled in the outer extension.ts file to notify the user and break out of
+    // * the thread of execution at the same time
     // notify user that config file was not found and current file is being used as the entry point
     // vscode.window.showInformationMessage('graphquill.config.js file was not found.
     // Please use the Create GraphQuill Config File Command to create one');
   }
 
-  // return the array with the two results, to be destrucutred when the function is invoked
+  // return an object with the results, to be destrucutred when the function is invoked
   return { entryPoint, portNumber, allowServerTimeoutConfigSetting };
 }
 

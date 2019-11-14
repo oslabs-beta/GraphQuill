@@ -19,7 +19,7 @@
 const childProcess = require('child_process');
 
 const checkForRunningServer = (
-  portNumber: string,
+  portNumber: number,
   once: boolean,
   allowServerTimeoutConfigSetting = 3000,
 ) => {
@@ -40,7 +40,7 @@ const checkForRunningServer = (
     console.log('terminal has printed some data...');
     allTerminalText = data.toString();
     portOpen = allTerminalText.includes('node');
-    console.log('allterminal text', allTerminalText);
+    // console.log('allterminal text', allTerminalText);
     // console.log('---data type is', data.constructor.name);
   });
 
@@ -60,7 +60,7 @@ const checkForRunningServer = (
     // if the portOpen boolean has been changed (it is actually changed in the on-data listener
     // above). Promise will resolve when the portOpen variable is true
     const intervalLsofToBash = setInterval(() => {
-      console.log('in interval ', portNumber);
+      // console.log('in interval ', portNumber);
       bashTerminal.stdin.write(`lsof -i :${portNumber}\n`);
       // console.log('inside promise-- portOpen boolean', portOpen);
       // console.log('inside promise-- allTerminalText', allTerminalText);

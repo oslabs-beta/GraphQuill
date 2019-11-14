@@ -22,7 +22,7 @@ import * as vscode from 'vscode';
 const fetch = require('node-fetch');
 const fs = require('fs');
 
-const extractQueries = require('./extractQueries.js');
+const extractQueries = require('./extractQueries');
 
 // checkQueryBrackets used to be here
 // parseQuery used to be here
@@ -35,7 +35,7 @@ const extractQueries = require('./extractQueries.js');
 function readFileSendReqAndWriteResponse(
   filePath: string,
   channel: vscode.OutputChannel,
-  portNumber: string,
+  portNumber: number,
   rootPath: string, // passing the root path in to control the function def. injection
 ) {
   // console.log('inreadFile: ', filePath);
