@@ -9,10 +9,12 @@
 // const { assert, expect, should } = require('chai');
 import { expect } from 'chai';
 import 'mocha';
+import 'path';
 
 const parseQuery = require('../../modules/client/parseQuery');
 const checkQueryBrackets = require('../../modules/client/checkQueryBrackets');
 const extractQueries = require('../../modules/client/extractQueries');
+const parseConfigFile = require('../../modules/client/parseConfigFile');
 
 // const findRootDirectory = require('../../modules/client/findRootDirectory');
 // const parseConfigFile = require('../../modules/client/parseConfigFile');
@@ -102,7 +104,40 @@ describe('Testing all parsing functions', function () {
       const result = extractQueries('grap`);');
       expect(result).to.deep.equal([]);
     });
-
   });
 
+  describe('Testing parseConfigFile', function () {
+    it('should be a function', function () {
+      expect(typeof parseConfigFile).to.equal('function');
+    });
+
+    it('should reveal correct port number', function () {
+      const pathway = __dirname.slice(0, -5).concat('helpers');
+      const result = parseConfigFile(pathway);
+      expect(result.portNumber).to.equal('3000');
+    });
+
+    it('should reveal correct entry point', function () {
+      const pathway = __dirname.slice(0, -5).concat('helpers');
+      const result = parseConfigFile(pathway);
+      const check = pathway.concat('/server/index.js');
+      expect(result.entryPoint).to.equal(check);
+    });
+
+    it('should default to list port 0 in event of failure', function () {
+      const result = parseConfigFile('hello');
+      expect(result.portNumber).to.equal(0);
+    });
+
+    it('should default to blank entry point in event of failure', function () {
+      const result = parseConfigFile('hello');
+      expect(result.entryPoint).to.equal('');
+    });
+
+    it('server timeout config setting should be accesible', function () {
+      const pathway = __dirname.slice(0, -5).concat('helpers');
+      const result = parseConfigFile(pathway);
+      expect(result.allowServerTimeoutConfigSetting).to.equal(5000);
+    });
+  });
 });
