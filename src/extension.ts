@@ -15,6 +15,7 @@ import * as vscode from 'vscode';
 // only needed for creating the config file
 const fs = require('fs');
 
+const debounce = require('./modules/client/debounce');
 const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse');
 const serverOn = require('./modules/server/serverOn');
 const serverOff = require('./modules/server/serverOff');
@@ -159,7 +160,11 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         // send the filename and channel to the readFileSRAWR function
-        readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber, rootPath);
+        debounce(
+          readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber, rootPath),
+          200,
+          false,
+        );
 
         // satisfying linter
         return null;
