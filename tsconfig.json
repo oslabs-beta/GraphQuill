@@ -9,7 +9,8 @@
     ],
     // if watch is set to true it will mess up vsce package because compiling will never end...
 		"watch": false,
-		"sourceMap": true,
+		//"sourceMap": true,
+		"inlineSourceMap": true, // replaced sourceMap flag with this to enable nyc testing
 		"rootDir": "src",
 		"strict": true   /* enable all strict type-checking options */
 		/* Additional Checks */

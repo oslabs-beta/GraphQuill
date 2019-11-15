@@ -48,7 +48,7 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
 		"test": "node ./out/test/runTest.js",
-		"parseUnitTest": "mocha -r ts-node/register src/test/suite/parser.test.ts",
+		"parseUnitTest": "nyc mocha -r ts-node/register src/test/suite/parser.test.ts",
 		"serverUnitTest": "mocha -r ts-node/register src/test/suite/server.test.ts"
 	},
 	"devDependencies": {
@@ -75,6 +75,13 @@
 		"vscode-test": "^1.2.0"
 	},
 	"dependencies": {
-		"node-fetch": "^2.6.0"
+		"node-fetch": "^2.6.0",
+		"nyc": "^14.1.1"
+	},
+	"nyc": {
+		"extension" : [
+			".ts"
+		]
 	}
+
 }
