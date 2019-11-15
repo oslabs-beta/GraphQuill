@@ -137,8 +137,8 @@ function readFileSendReqAndWriteResponse(
         );
         console.log('finalReqResObj: ', finalReqResObj);
         finalReqResObj.forEach((pair) => {
-          channel.append('\nQuery: ' + pair.query + '\n');
-          channel.append(`Response: \n${JSON.stringify(pair.response, null, 2)}`);
+          // channel.append('\nQuery: ' + pair.query + '\n');
+          channel.append(`\nQuery:${pair.query}Response:\n${JSON.stringify(pair.response, null, 2)}`);
         });
       }, 1);
 
