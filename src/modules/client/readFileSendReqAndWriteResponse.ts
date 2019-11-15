@@ -24,11 +24,6 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 
 const extractQueries = require('./extractQueries');
-
-// checkQueryBrackets used to be here
-// parseQuery used to be here
-// extractQueries was here
-
 // parent function to read file,
 // call helper functions to parse out query string,
 // send request to GraphQL API,
@@ -74,53 +69,30 @@ function readFileSendReqAndWriteResponse(
           (query: string|Error) => (
             // should all be strings...
             // remove extra quotes
+            // create object with query and response properties to tie queries to their responses
             typeof query === 'string' && { query: query.slice(1, query.length - 1), response: '' }
           ),
         );
 
         console.log('--JUST THE QUERIES', queriesWithoutQuotes);
-
-        // [ { query: string, response: string }, { query: string, response: string }, ]
-        // iterate over array of query/response pairs (wrap in Promise.all)
-        // for each query, add response
-        // once Promise.all resolves, iterate over query/response array objects & append to channel
-
-        // queriesWithoutQuotes.forEach((query) => {
-        //   // send the fetch to the correct port (passed in as a variable)
-        //   fetch(`http://localhost:${portNumber}/graphql`, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ query }),
-        //   })
-        //     .then((response: Response) => response.json())
-        //     .then((thing: Object) => {
-        //       console.log('printed: ', thing);
-        //       // append any graphql response to the output channel
-        //  channel.append(`\n${JSON.stringify(thing, null, 2)}`); // may need to stringify to send
-        //       channel.show(true);
-        //     })
-        //     .catch((error: Error) => {
-        //       console.log('fetch catch error: ', error, typeof error, error.constructor.name);
-
-        //       // print any errors to the output channel
-        //       channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
-        //     });
-        // });
-
-        // // only append this string to the output channel once
-        // channel.append('Responses are:');
-
+        // wrapping queries in Promise.all to ensure all fetches resolve before appending to channel
         const finalReqResObj = await Promise.all(
+          // using map to generate array of promises
           queriesWithoutQuotes.map((reqResObj) => {
+            // confirm object exists
             if (reqResObj) {
+              // copy reqResObj to avoid mutating argument object
               const newReqResObj = { ...reqResObj };
+              // destructure query off of object
               const { query } = newReqResObj;
+              // using return here to return promise into Promise.all
               return fetch(`http://localhost:${portNumber}/graphql`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query }),
               })
                 .then((response: Response) => response.json())
+                // adding parsed API response to newReqResObject
                 .then((parsedResponse: {data: Object, errors: Object}) => {
                   console.log('parsedResponse is: ', parsedResponse);
                   newReqResObj.response = parsedResponse.data || parsedResponse.errors;
@@ -136,18 +108,12 @@ function readFileSendReqAndWriteResponse(
           }),
         );
         console.log('finalReqResObj: ', finalReqResObj);
+        // iterate over array of req/res objects and append each pair to the channel
         finalReqResObj.forEach((pair) => {
-          // channel.append('\nQuery: ' + pair.query + '\n');
           channel.append(`\nQuery:${pair.query}Response:\n${JSON.stringify(pair.response, null, 2)}`);
         });
       }, 1);
-
-      // then send response back to vscode output channel
-      // console.log('parsed queries are', result);
-      // TODO match these up with the correct queries when there are multiple within a single file
-      // TODO still the promise all thing
-      // channel.append(`GraphQuill Queries are:\n${result.filter((e : string|Error) =>
-      // (typeof e === 'string' ? e.length : false))}\n`);
+      // append to channel to announce results (appears in channel first because of async)
       channel.append('GraphQuill results:');
       channel.show(true);
     }
