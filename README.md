@@ -1,4 +1,4 @@
-<div align-items="center" style="margin: 0 auto -50px auto; width: 250px; height: 250px"><img src="./publicDocs/graphquill-logo.png" /></div>
+<div><img width="250px" height="250px" style="margin: 0 auto -50px auto;" src="./publicDocs/graphquill-logo.png" /></div>
 
 # GraphQuill
 
