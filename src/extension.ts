@@ -14,7 +14,6 @@ import * as vscode from 'vscode';
 
 // only needed for creating the config file
 const fs = require('fs');
-const fetch = require('node-fetch');
 
 const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse');
 const serverOn = require('./modules/server/serverOn');
@@ -27,6 +26,9 @@ const checkForRunningServer = require('./modules/server/checkForRunningServer');
 const findRootDirectory = require('./modules/client/findRootDirectory');
 // require in file that returns entryPoint when given the root path
 const parseConfigFile = require('./modules/client/parseConfigFile');
+
+// functionality that prints the entire GraphQL schema to the output channel
+const showGraphqlSchema = require('./modules/client/showGraphqlSchema');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -325,82 +327,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
 
-    // if the server is on from either the user or graphquill, continue
-    // send first query & setup on save listener
-    if (serverOnFromUser || serverTurnedOnByGraphQuill) {
-      // send that request ot get back the entire schema...
-      const all = await fetch(`http://localhost:${portNumber}/graphql`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: `query IntrospectionQuery {
-          __schema {
-            types {
-              ...FullType
-            }
-          }
-        }
-        
-        fragment FullType on __Type {
-          kind
-          name
-          description
-          fields(includeDeprecated: false) {
-            name
-            description
-            args {
-              ...InputValue
-            }
-            type {
-              ...TypeRef
-            }
-          }
-        }
-        fragment InputValue on __InputValue {
-          name
-          description
-          type { ...TypeRef }
-          defaultValue
-        }
-        fragment TypeRef on __Type {
-          kind
-          name
-          ofType {
-            kind
-            name
-            ofType {
-              kind
-              name
-              ofType {
-                kind
-                name
-                ofType {
-                  kind
-                  name
-                  ofType {
-                    kind
-                    name
-                    ofType {
-                      kind
-                      name
-                      ofType {
-                        kind
-                        name
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }`,
-        }),
-      }).then((res: Response) => res.json())
-        // eslint-disable-next-line no-underscore-dangle
-        .then((json: Object) => json);
-      // .then((json: Object {data}) => json.data.__schema.types.filter((e: Object) => e.kind !== 'SCALAR'));
-      // parse that shit
-    }
+    // clear the channel off?
+    gqChannel.clear();
+
+    // run required in functionality here?
+    showGraphqlSchema(serverOnFromUser, serverTurnedOnByGraphQuill, gqChannel, portNumber);
 
     // turn the server off if the extension turned it on
     console.log('killing port', serverTurnedOnByGraphQuill, portNumber);
