@@ -6,6 +6,9 @@
   3. Change the `portNumber` variable to the port that your server will be running on (The default config file will set this value to 3000).
   4. If your server takes particuarlly long to start up, increase the `serverStartupTimeAllowed` variable to a time in milliseconds. GraphQuill will wait that many milliseconds for your server to start before throwing an error.
 
+  ## Advanced Use
+  (in progress)
+
 ## VS Code Extension Commands
   1. GraphQuill: Activate
   2. GraphQuill: Deactivate

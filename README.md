@@ -1,3 +1,5 @@
+<div align-items="center" style="margin: 0 auto -50px auto; width: 250px; height: 250px"><img src="./publicDocs/graphquill-logo.png" /></div>
+
 # GraphQuill
 
 ## What is GraphQuill?
@@ -25,9 +27,21 @@ Graphquill can be installed from the VS Code Extensions marketplace [here](https
 Open the command palette in VS Code (Cmd/Ctrl + Shift + P) and select `"GraphQuill: Create GraphQuill Config File"`. A default config file will be generated. Update the entry point and port number to finish your GraphQuill setup (for more details refer to the [documentation](./publicDocs/DOCUMENTATION.md)).
 
 ## Write your first GraphQuill query
+Activate GraphQuill from the command palette in VS Code (Cmd/Ctrl + Shift + P). GraphQuill will inject a function definition on the top line of your file.
+Anywhere in your open file, put a GraphQL query inside the graphQuill function. For example: 
+  ```javascript
+    graphQuill(`{
+      customer (customerId: 8) {
+        firstName
+        lastName
+        email
+      }  
+    }`);
 
-## Advanced Use
-For additional features with less use cases, refer to the [documentation](./publicDocs/DOCUMENTATION.md).
+    graphQuill(`{ product (productId: 26) { name description weight } }`);
+  ```
+On every save, GraphQuill will send any requests inside of the `graphQuill` function to your GraphQL API and show responses in the GraphQuill Output Channel. To send another request, create a new invokation of the `graphQuill` function and put the new request as the argument.
+
 
 ___
 
@@ -36,4 +50,5 @@ We are always looking to improve. If there are any contributions or issues you h
 
 ## Relase Notes
 Created by: Alex Chao, Austin Ruby and Edward Greenburg
+
 0.8.0 | Initial release of GraphQuill, More to come! 
