@@ -34,7 +34,7 @@ function readFileSendReqAndWriteResponse(
   portNumber: number,
   rootPath: string, // passing the root path in to control the function def. injection
 ) {
-  // console.log('inreadFile: ', filePath);
+  console.log('rfsrwr invoked');
 
   // parse the contents of the entire filePath file to a string
   const copy = fs.readFileSync(filePath).toString();
