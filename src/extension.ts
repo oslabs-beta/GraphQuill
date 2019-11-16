@@ -6,7 +6,8 @@
  * - config file setup command made
  *   - config file option to allow for a longer time for the graphql server to startup
  * - updating variables in the event of changes in the config files
- * @changelog : ## Austin?
+ * @changelog : Austin Ruby, Nov. 15th: passed invocation of RFSRWR function within doc
+ * save listener into debounce function to avoid overquerying API if user mashes save
  * * */
 
 // eslint-disable-next-line import/no-unresolved
