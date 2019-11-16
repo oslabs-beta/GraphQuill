@@ -141,6 +141,13 @@ export function activate(context: vscode.ExtensionContext) {
       // send that request from the currentopeneditor
       readFileSendReqAndWriteResponse(currOpenEditorPath, gqChannel, portNumber, rootPath);
 
+
+      const debouncedRFSRWR = debounce(
+        readFileSendReqAndWriteResponse,
+        200,
+        false,
+      );
+
       // initialize the save listener here to clear the channel and resend new requests
       saveListener = vscode.workspace.onDidSaveTextDocument((event) => {
         // console.log('save event!!!', event);
@@ -161,11 +168,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         // send the filename and channel to the readFileSRAWR function
-        debounce(
-          readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber, rootPath),
-          200,
-          false,
-        );
+        debouncedRFSRWR(event.fileName, gqChannel, portNumber, rootPath);
 
         // satisfying linter
         return null;
