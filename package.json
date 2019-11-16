@@ -19,7 +19,8 @@
 		"onCommand:extension.activateGraphQuill",
 		"onCommand:extension.deactivateGraphQuill",
 		"onCommand:extension.toggleGraphQuill",
-		"onCommand:extension.createConfigFile"
+		"onCommand:extension.createConfigFile",
+		"onCommand:extension.showGraphQLSchema"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -39,6 +40,10 @@
 			{
 				"command": "extension.createConfigFile",
 				"title": "GraphQuill: Create GraphQuill Config File"
+			},
+			{
+				"command": "extension.showGraphQLSchema",
+				"title": "GraphQuill: Show the GraphQL Schema"
 			}
 		]
 	},
@@ -79,9 +84,8 @@
 		"nyc": "^14.1.1"
 	},
 	"nyc": {
-		"extension" : [
+		"extension": [
 			".ts"
 		]
 	}
-
 }

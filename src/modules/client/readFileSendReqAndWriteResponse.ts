@@ -34,8 +34,6 @@ function readFileSendReqAndWriteResponse(
   portNumber: number,
   rootPath: string, // passing the root path in to control the function def. injection
 ) {
-  console.log('rfsrwr invoked');
-
   // parse the contents of the entire filePath file to a string
   const copy = fs.readFileSync(filePath).toString();
   // check if the file is within the root directory, otherwise we don't want to inject the
@@ -110,7 +108,7 @@ function readFileSendReqAndWriteResponse(
         console.log('finalReqResObj: ', finalReqResObj);
         // iterate over array of req/res objects and append each pair to the channel
         finalReqResObj.forEach((pair) => {
-          channel.append(`\nQuery:${pair.query}Response:\n${JSON.stringify(pair.response, null, 2)}`);
+          channel.append(`\nQuery:${pair.query}\nResponse:\n${JSON.stringify(pair.response, null, 2)}\n`);
         });
       }, 1);
       // append to channel to announce results (appears in channel first because of async)

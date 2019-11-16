@@ -45,7 +45,7 @@ const serverOff = (portNumber: number) => {
   terminal2.stdin.write(`kill $(lsof -t -i:${portNumber})\n`);
   terminal2.stdin.end();
 
-  vscode.window.showInformationMessage('GraphQuill has been turned off');
+  vscode.window.showInformationMessage('GraphQuill server has been turned off.');
 };
 
 module.exports = serverOff;

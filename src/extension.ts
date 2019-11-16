@@ -29,6 +29,9 @@ const findRootDirectory = require('./modules/client/findRootDirectory');
 // require in file that returns entryPoint when given the root path
 const parseConfigFile = require('./modules/client/parseConfigFile');
 
+// functionality that prints the entire GraphQL schema to the output channel
+const showGraphqlSchema = require('./modules/client/showGraphqlSchema');
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -271,6 +274,83 @@ export function activate(context: vscode.ExtensionContext) {
 
   // push it to the subscriptions
   context.subscriptions.push(disposableCreateConfigFile);
+
+  const disposableShowGraphQLSchema = vscode.commands.registerCommand('extension.showGraphQLSchema', async () => {
+    console.log('show schema running');
+    // show output channel, clear any old stuff off of it
+    gqChannel.show(true);
+    gqChannel.clear();
+
+    // parse the config file
+    const parseResult = parseConfigFile(rootPath);
+    entryPoint = parseResult.entryPoint; // will return the found entry point or an empty string
+    allowServerTimeoutConfigSetting = parseResult.allowServerTimeoutConfigSetting;
+    portNumber = parseResult.portNumber; // will return the found port number or zero if not found
+
+    // console.log('parseResults', parseResult);
+
+    // if the entryPoint is falsey, break out and tell the user to create a config file
+    if (!entryPoint || !portNumber) {
+      gqChannel.append('The config file was not found or had an error, please use the Create GraphQuill Config File Command to make one.');
+      // break out of this execution context
+      return null;
+    }
+
+    // Check ONCE if the port is open (also this does not need the third param)
+    // will resolve to a true or false value
+    const serverOnAlready = await checkForRunningServer(portNumber, true);
+    // console.log('--serverOnFromUser after once check is:', serverOnFromUser);
+    let serverTurnedOnBySchemaOutputter = false;
+
+    // trigger serverOn if the user does not already have the server running
+    if (!serverOnAlready) {
+      // start up the user's server, pass in the gqChannel to log any error messages
+      serverOn(entryPoint, gqChannel);
+
+      // give user feedback that server is starting up
+      gqChannel.clear();
+      gqChannel.append('The server is starting up...\n');
+
+      // await this function that will return true or false based on if the server has been started
+      // false: if starting the server is longer than the time allotted in the config file (defaults
+      // to 3 seconds)
+      serverTurnedOnBySchemaOutputter = await checkForRunningServer(portNumber,
+        // once setting is false, so the returned promise will only resolve when the server has
+        // started OR the timeout (next variable or 3sec) is reached
+        false,
+        // allowServerT.C.S. is either a time in milliseconds that defaults to 3000
+        allowServerTimeoutConfigSetting);
+
+      // if it is false, that means there was an error starting the server
+      // notify the user & end the thread of execution
+      if (!serverTurnedOnBySchemaOutputter) {
+        // console.log('server is taking too long to startup');
+
+        // give feedback to user that port didn't start (and the specified timeout config setting,
+        // defaults to 3 seconds)
+        gqChannel.clear();
+        gqChannel.append(`The server is taking too long to startup (>${(allowServerTimeoutConfigSetting || 3000) / 1000} seconds).\nTo increase this time, update the "serverStartupTimeAllowed" setting in the graphquill.config.js file.`);
+
+        // break out, and just in case I'm going to try to kill the port if it did open
+        // otherwise we could get runaway node processes...
+        return setTimeout(() => serverOff(portNumber), 5000);
+      }
+    }
+
+    // clear the channel off?
+    gqChannel.clear();
+
+    // run required in functionality here, required in
+    showGraphqlSchema(serverOnAlready, serverTurnedOnBySchemaOutputter, gqChannel, portNumber);
+
+    // turn the server off if the extension turned it on
+    console.log('killing port', 'kill server boolean:', serverTurnedOnByGraphQuill, 'port number', portNumber);
+    // will resolve to false if graphquill did not start the server,
+    // will kill the server/port otherwise
+    return setTimeout(() => (serverTurnedOnBySchemaOutputter && serverOff(portNumber)), 1);
+  });
+
+  context.subscriptions.push(disposableShowGraphQLSchema);
 }
 
 
