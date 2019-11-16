@@ -14,6 +14,7 @@ import * as vscode from 'vscode';
 
 // only needed for creating the config file
 const fs = require('fs');
+const fetch = require('node-fetch');
 
 const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse');
 const serverOn = require('./modules/server/serverOn');
@@ -262,6 +263,151 @@ export function activate(context: vscode.ExtensionContext) {
 
   // push it to the subscriptions
   context.subscriptions.push(disposableCreateConfigFile);
+
+  const disposableShowGraphQLSchema = vscode.commands.registerCommand('extension.showGraphQLSchema', async () => {
+    console.log('show schema running');
+    // show output channel, clear any old stuff off of it
+    gqChannel.show(true);
+    gqChannel.clear();
+
+    // parse the config file
+    const parseResult = parseConfigFile(rootPath);
+    entryPoint = parseResult.entryPoint; // will return the found entry point or an empty string
+    allowServerTimeoutConfigSetting = parseResult.allowServerTimeoutConfigSetting;
+    portNumber = parseResult.portNumber; // will return the found port number or zero if not found
+
+    // console.log('parseResults', parseResult);
+
+    // if the entryPoint is falsey, break out and tell the user to create a config file
+    if (!entryPoint || !portNumber) {
+      gqChannel.append('The config file was not found or had an error, please use the Create GraphQuill Config File Command to make one.');
+      // break out of this execution context
+      return null;
+    }
+
+    // Check ONCE if the port is open (also this does not need the third param)
+    // will resolve to a true or false value
+    const serverOnFromUser = await checkForRunningServer(portNumber, true);
+    // console.log('--serverOnFromUser after once check is:', serverOnFromUser);
+
+    // trigger serverOn if the user does not already have the server running
+    if (!serverOnFromUser) {
+      // start up the user's server, pass in the gqChannel to log any error messages
+      serverOn(entryPoint, gqChannel);
+
+      // give user feedback that server is starting up
+      gqChannel.clear();
+      gqChannel.append('The server is starting up...\n');
+
+      // await this function that will return true or false based on if the server has been started
+      // false: if starting the server is longer than the time allotted in the config file (defaults
+      // to 3 seconds)
+      serverTurnedOnByGraphQuill = await checkForRunningServer(portNumber,
+        // once setting is false, so the returned promise will only resolve when the server has
+        // started OR the timeout (next variable or 3sec) is reached
+        false,
+        // allowServerT.C.S. is either a time in milliseconds that defaults to 3000
+        allowServerTimeoutConfigSetting);
+
+      // if it is false, that means there was an error starting the server
+      // notify the user & end the thread of execution
+      if (!serverTurnedOnByGraphQuill) {
+        // console.log('server is taking too long to startup');
+
+        // give feedback to user that port didn't start (and the specified timeout config setting,
+        // defaults to 3 seconds)
+        gqChannel.clear();
+        gqChannel.append(`The server is taking too long to startup (>${(allowServerTimeoutConfigSetting || 3000) / 1000} seconds).\nTo increase this time, update the "serverStartupTimeAllowed" setting in the graphquill.config.js file.`);
+
+        // break out, and just in case I'm going to try to kill the port if it did open
+        // otherwise we could get runaway node processes...
+        return setTimeout(() => serverOff(portNumber), 5000);
+      }
+    }
+
+    // if the server is on from either the user or graphquill, continue
+    // send first query & setup on save listener
+    if (serverOnFromUser || serverTurnedOnByGraphQuill) {
+      // send that request ot get back the entire schema...
+      const all = await fetch(`http://localhost:${portNumber}/graphql`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: `query IntrospectionQuery {
+          __schema {
+            types {
+              ...FullType
+            }
+          }
+        }
+        
+        fragment FullType on __Type {
+          kind
+          name
+          description
+          fields(includeDeprecated: false) {
+            name
+            description
+            args {
+              ...InputValue
+            }
+            type {
+              ...TypeRef
+            }
+          }
+        }
+        fragment InputValue on __InputValue {
+          name
+          description
+          type { ...TypeRef }
+          defaultValue
+        }
+        fragment TypeRef on __Type {
+          kind
+          name
+          ofType {
+            kind
+            name
+            ofType {
+              kind
+              name
+              ofType {
+                kind
+                name
+                ofType {
+                  kind
+                  name
+                  ofType {
+                    kind
+                    name
+                    ofType {
+                      kind
+                      name
+                      ofType {
+                        kind
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }`,
+        }),
+      }).then((res: Response) => res.json())
+        // eslint-disable-next-line no-underscore-dangle
+        .then((json: Object) => json);
+      // .then((json: Object {data}) => json.data.__schema.types.filter((e: Object) => e.kind !== 'SCALAR'));
+      // parse that shit
+    }
+
+    // turn the server off if the extension turned it on
+    console.log('killing port', serverTurnedOnByGraphQuill, portNumber);
+    return setTimeout(() => (serverTurnedOnByGraphQuill && serverOff(portNumber)), 1);
+  });
+
+  context.subscriptions.push(disposableShowGraphQLSchema);
 }
 
 
