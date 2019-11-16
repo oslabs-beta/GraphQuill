@@ -6,7 +6,8 @@
  * - config file setup command made
  *   - config file option to allow for a longer time for the graphql server to startup
  * - updating variables in the event of changes in the config files
- * @changelog : ## Austin?
+ * @changelog : Austin Ruby, Nov. 15th: passed invocation of RFSRWR function within doc
+ * save listener into debounce function to avoid overquerying API if user mashes save
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -15,6 +16,7 @@ import * as vscode from 'vscode';
 // only needed for creating the config file
 const fs = require('fs');
 
+const debounce = require('./modules/client/debounce');
 const readFileSendReqAndWriteResponse = require('./modules/client/readFileSendReqAndWriteResponse');
 const serverOn = require('./modules/server/serverOn');
 const serverOff = require('./modules/server/serverOff');
@@ -142,6 +144,13 @@ export function activate(context: vscode.ExtensionContext) {
       // send that request from the currentopeneditor
       readFileSendReqAndWriteResponse(currOpenEditorPath, gqChannel, portNumber, rootPath);
 
+
+      const debouncedRFSRWR = debounce(
+        readFileSendReqAndWriteResponse,
+        200,
+        false,
+      );
+
       // initialize the save listener here to clear the channel and resend new requests
       saveListener = vscode.workspace.onDidSaveTextDocument((event) => {
         // console.log('save event!!!', event);
@@ -162,7 +171,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         // send the filename and channel to the readFileSRAWR function
-        readFileSendReqAndWriteResponse(event.fileName, gqChannel, portNumber, rootPath);
+        debouncedRFSRWR(event.fileName, gqChannel, portNumber, rootPath);
 
         // satisfying linter
         return null;
