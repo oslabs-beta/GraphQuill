@@ -71,7 +71,7 @@ const serverOn = (entryPoint: number, gqChannel: vscode.OutputChannel) => {
       resolve();
       console.log('just resolved');
 
-      vscode.window.showInformationMessage('GraphQuill Activated');
+      vscode.window.showInformationMessage('The GraphQuill server has been started');
     }, 1);
   });
 

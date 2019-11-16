@@ -330,11 +330,13 @@ export function activate(context: vscode.ExtensionContext) {
     // clear the channel off?
     gqChannel.clear();
 
-    // run required in functionality here?
+    // run required in functionality here, required in
     showGraphqlSchema(serverOnFromUser, serverTurnedOnByGraphQuill, gqChannel, portNumber);
 
     // turn the server off if the extension turned it on
-    console.log('killing port', serverTurnedOnByGraphQuill, portNumber);
+    console.log('killing port', 'kill server boolean:', serverTurnedOnByGraphQuill, 'port number', portNumber);
+    // will resolve to false if graphquill did not start the server,
+    // will kill the server/port otherwise
     return setTimeout(() => (serverTurnedOnByGraphQuill && serverOff(portNumber)), 1);
   });
 
