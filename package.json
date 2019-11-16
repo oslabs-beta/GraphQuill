@@ -79,9 +79,8 @@
 		"nyc": "^14.1.1"
 	},
 	"nyc": {
-		"extension" : [
+		"extension": [
 			".ts"
 		]
 	}
-
 }

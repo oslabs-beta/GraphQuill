@@ -110,7 +110,7 @@ function readFileSendReqAndWriteResponse(
         console.log('finalReqResObj: ', finalReqResObj);
         // iterate over array of req/res objects and append each pair to the channel
         finalReqResObj.forEach((pair) => {
-          channel.append(`\nQuery:${pair.query}Response:\n${JSON.stringify(pair.response, null, 2)}`);
+          channel.append(`\nQuery:${pair.query}\nResponse:\n${JSON.stringify(pair.response, null, 2)}\n`);
         });
       }, 1);
       // append to channel to announce results (appears in channel first because of async)
