@@ -21,4 +21,4 @@
   1. 
   5. 
     
-<img width="600px" src="https://media.giphy.com/media/KfeE7NzL1rUZtlod90/giphy.gif" alt="schema output gif"/>
+<img width="600px" src="https://github.com/oslabs-beta/GraphQuill/blob/dev/publicDocs/printSchema.gif" alt="schema output gif"/>
