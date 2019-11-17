@@ -1,4 +1,6 @@
-<div><img width="250px" height="250px" style="margin: 0 auto -50px auto;" src="./publicDocs/graphquill-logo.png" /></div>
+<p align="center">
+  <img width="250px" src="./publicDocs/graphquill-logo.png" />
+</p>
 
 # GraphQuill
 
@@ -14,7 +16,8 @@
 ### **Additional Features**
   * Output the current schema of your GraphQL API in the GraphQuill output channel.
 
-  (gif/demo coming soon)
+### **GraphQuill In Action**
+  <img width="600px" src="./publicDocs/basicDemo.gif" />
 
 ___
 

@@ -105,15 +105,16 @@ function readFileSendReqAndWriteResponse(
             return reqResObj;
           }),
         );
-        console.log('finalReqResObj: ', finalReqResObj);
+        // console.log('finalReqResObj: ', finalReqResObj);
+        channel.clear();
+        channel.append('GraphQuill results:');
+        channel.show(true);
         // iterate over array of req/res objects and append each pair to the channel
         finalReqResObj.forEach((pair) => {
           channel.append(`\nQuery:${pair.query}\nResponse:\n${JSON.stringify(pair.response, null, 2)}\n`);
         });
       }, 1);
       // append to channel to announce results (appears in channel first because of async)
-      channel.append('GraphQuill results:');
-      channel.show(true);
     }
   });
 }
