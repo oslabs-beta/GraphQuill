@@ -14,7 +14,7 @@
   3. Sends the queries/mutations to the GraphQL API.
   4. Renders the responses to the GraphQuill output channel on VS Code.
   
-  <img width="600px" src="./publicDocs/basicDemo.gif" />
+  <img width="600px" src="https://media.giphy.com/media/YSHy2P7hyqtodGsKuk/giphy.gif" alt="demo gif" />
 
 ### **Additional Features**
   * Output the current schema of your GraphQL API in the GraphQuill output channel.
@@ -55,4 +55,4 @@ We are always looking to improve. If there are any contributions or issues you h
 ## Relase Notes
 Created by: Alex Chao, Austin Ruby and Edward Greenburg
 
-0.9.0 | Initial release of GraphQuill, More to come! 
+0.10.0 | Initial release of GraphQuill, More to come! 
