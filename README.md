@@ -55,4 +55,4 @@ We are always looking to improve. If there are any contributions or issues you h
 ## Relase Notes
 Created by: Alex Chao, Austin Ruby and Edward Greenburg
 
-0.8.0 | Initial release of GraphQuill, More to come! 
+0.9.0 | Initial release of GraphQuill, More to come! 
