@@ -5,7 +5,7 @@
 # GraphQuill
 
 ## What is GraphQuill?
-  GraphQuill is a VS Code extension that performs GraphQL API endpoint testing within the VS Code environment. GraphQuill intends to remove the need for switching between VS Cdoe and GraphiQL, Postman, or another API development tool.
+  GraphQuill is a VS Code extension that performs GraphQL API endpoint testing within the VS Code environment. GraphQuill intends to remove the need for switching between VS Code and GraphiQL, Postman, or another API development tool.
 
 ## Features
 ### **Core Features**
