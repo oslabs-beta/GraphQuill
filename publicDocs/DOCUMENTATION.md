@@ -1,4 +1,4 @@
-# GraphQuill Documentation **In Progress**
+# **In Progress** - GraphQuill Documentation 
 
 ## Setting up the graphquill.config.js file:
   1. Open the command palette in VS Code (Cmd/Ctrl + Shift + P) and select `"GraphQuill: Create GraphQuill Config File"`. A default config file will be generated. 
@@ -19,6 +19,6 @@
 
 ## Explainations for each Extension Command
   1. 
-  5. 
+  5. Outputting the schema to the output channel:
     
-<img width="600px" src="https://github.com/oslabs-beta/GraphQuill/blob/dev/publicDocs/printSchema.gif" alt="schema output gif"/>
+<img width="600px" src="./printSchema.gif" alt="schema output gif"/>

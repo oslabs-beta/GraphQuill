@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="250px" src="https://github.com/oslabs-beta/GraphQuill/raw/dev/publicDocs/graphquill-logo.png" />
+  <img width="250px" src="./publicDocs/graphquill-logo.png" />
 </p>
 
 # GraphQuill
@@ -14,7 +14,7 @@
   3. Sends the queries/mutations to the GraphQL API.
   4. Renders the responses to the GraphQuill output channel on VS Code.
   
-  <img width="600px" src="https://github.com/oslabs-beta/GraphQuill/blob/dev/publicDocs/basicDemo.gif" alt="demo gif" />
+  <img width="600px" src="./publicDocs/basicDemo.gif" alt="demo gif" />
 
 ### **Additional Features**
   * Output the current schema of your GraphQL API in the GraphQuill output channel.
@@ -55,4 +55,4 @@ We are always looking to improve. If there are any contributions or issues you h
 ## Relase Notes
 Created by: Alex Chao, Austin Ruby and Edward Greenburg
 
-0.10.0 | Initial release of GraphQuill, More to come! 
+0.11.0 | Initial release of GraphQuill, More to come! 
