@@ -13,11 +13,12 @@
   2. Parses GraphQL queries/mutations that are typed into the current open document in VS Code
   3. Sends the queries/mutations to the GraphQL API.
   4. Renders the responses to the GraphQuill output channel on VS Code.
+  
+  <img width="600px" src="./publicDocs/basicDemo.gif" />
+
 ### **Additional Features**
   * Output the current schema of your GraphQL API in the GraphQuill output channel.
 
-### **GraphQuill In Action**
-  <img width="600px" src="./publicDocs/basicDemo.gif" />
 
 ___
 

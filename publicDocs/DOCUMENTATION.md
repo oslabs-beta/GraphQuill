@@ -15,6 +15,10 @@
   2. GraphQuill: Deactivate
   3. GraphQuill: Toggle (Start/Stop)
   4. GraphQuill: Create Config File
+  5. GraphQuill: Show The GraphQL Schema
 
 ## Explainations for each Extension Command
   1. 
+  5. 
+    
+<img width="600px" src="./printSchema.gif"/>
