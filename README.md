@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="250px" src="./publicDocs/graphquill-logo.png" />
+  <img width="250px" src="https://github.com/oslabs-beta/GraphQuill/raw/dev/publicDocs/graphquill-logo.png" />
 </p>
 
 # GraphQuill
