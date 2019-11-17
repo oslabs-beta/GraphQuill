@@ -50,7 +50,7 @@ On every save, GraphQuill will send any requests inside of the `graphQuill` func
 ___
 
 ## Contributing and Issues
-We are always looking to improve. If there are any contributions or issues you have, please check out our documentation on [contributions](./publicDocs/CONTRIBUTIONS.md) or [issues](./publicDocs/ISSUES.md).
+We are always looking to improve. If there are any contributions or issues you have, please check out our documentation on [contributions](./publicDocs/CONTRIBUTING.md) or [issues](./publicDocs/ISSUES.md).
 
 ## Relase Notes
 Created by: Alex Chao, Austin Ruby and Edward Greenburg
