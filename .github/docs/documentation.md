@@ -1,11 +1,11 @@
 # GraphQuill Documentation 
 
 ## Contents
-  1. [Setting up a config file](##Setting-up-the-graphquill.config.js-file)
-  1. [Writing GraphQuill Queries](##Writing-GraphQuill-Queries)
-  1. [List of VS Code Extension Commands](##VS-Code-Extension-Commands)
-  1. [Explainations of Each Command](##Explainations-for-each-Command) 
-  1. [Under the Hood of GraphQuill](##The-*under-the-hood*-Details)
+  1. [Setting up a config file](#Setting-up-the-graphquill.config.js-file)
+  1. [Writing GraphQuill Queries](#Writing-GraphQuill-Queries)
+  1. [List of VS Code Extension Commands](#VS-Code-Extension-Commands)
+  1. [Explainations of Each Command](#Explainations-for-each-Command) 
+  1. [Under the Hood of GraphQuill](#The-under-the-hood-Details)
 ---
 ---
 
@@ -98,4 +98,4 @@
       * The compromise we settled on was to print the entire GraphQL schema to the output channel.
       * In the exact same method as Activating GraphQuill, this command checks if the server is already running, if not it spins it up. 
       * Once the server is on, it sends a long introspection query to receive back a big-ass object with all the information about the GraphQL schema.
-      * We built iterative function that parses through that object to create a condensed GraphQL schema that appends to the GraphQuill Output Channel (gif above in [Explainations of Each Command #5](##Explainations-for-each-Command) )
+      * We built iterative function that parses through that object to create a condensed GraphQL schema that appends to the GraphQuill Output Channel (gif above in [Explainations of Each Command #5](#Explainations-for-each-Command) )
