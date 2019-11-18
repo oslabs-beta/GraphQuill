@@ -1,7 +1,7 @@
 # GraphQuill Documentation 
 
 ## Contents
-  1. [Setting up a config file](#Setting-up-the-graphquill.config.js-file)
+  1. [Setting up a config file](#Setting-up-the-graphquillconfigjs-file)
   1. [Writing GraphQuill Queries](#Writing-GraphQuill-Queries)
   1. [List of VS Code Extension Commands](#VS-Code-Extension-Commands)
   1. [Explainations of Each Command](#Explainations-for-each-Command) 
