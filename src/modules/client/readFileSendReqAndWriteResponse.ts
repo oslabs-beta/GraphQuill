@@ -43,23 +43,25 @@ function readFileSendReqAndWriteResponse(
     fs.writeFileSync(filePath, newFile);
   }
 
-  // read user's file
+  // read user's file to parse
+  // eslint-disable-next-line consistent-return
   fs.readFile(filePath, (err: Error, data: Buffer) => {
     if (err) {
-      console.log(err);
-    } else {
-      // if no error, convert data to string and pass into gQParser to pull out query/ies
-      const result: (string | Error)[] = extractQueries(data.toString());
+      // console.log(err);
+      return null;
+    }
+    // if no error, convert data to string and pass into gQParser to pull out query/ies
+    const result: (string | Error)[] = extractQueries(data.toString());
 
-      // send post request to API/graphql
+    // send post request to API/graphql
 
-      setTimeout(async () => {
-        // handle multiple queries in file...
-        // the additional quotes need to be parsed off
-        // queries without quotes will be an array of either falses or objects
-        // objects will have a query property that will either be a string or an instance of Error
-        // and a response property that will be a string
-        const queriesWithoutQuotes:
+    setTimeout(async () => {
+      // handle multiple queries in file...
+      // the additional quotes need to be parsed off
+      // queries without quotes will be an array of either falses or objects
+      // objects will have a query property that will either be a string or an instance of Error
+      // and a response property that will be a string
+      const queriesWithoutQuotes:
         (false|{ query: (string|Error), response: Object })[] = result.filter(
           // callback to remove empty string queries (i.e. the function def of graphQuill)
           (e: string|Error) => (typeof e === 'string' && e.length),
@@ -72,50 +74,49 @@ function readFileSendReqAndWriteResponse(
           ),
         );
 
-        console.log('--JUST THE QUERIES', queriesWithoutQuotes);
-        // wrapping queries in Promise.all to ensure all fetches resolve before appending to channel
-        const finalReqResObj = await Promise.all(
-          // using map to generate array of promises
-          queriesWithoutQuotes.map((reqResObj) => {
-            // confirm object exists
-            if (reqResObj) {
-              // copy reqResObj to avoid mutating argument object
-              const newReqResObj = { ...reqResObj };
-              // destructure query off of object
-              const { query } = newReqResObj;
-              // using return here to return promise into Promise.all
-              return fetch(`http://localhost:${portNumber}/graphql`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query }),
+      // console.log('--JUST THE QUERIES', queriesWithoutQuotes);
+      // wrapping queries in Promise.all to ensure all fetches resolve before appending to channel
+      const finalReqResObj = await Promise.all(
+        // using map to generate array of promises
+        queriesWithoutQuotes.map((reqResObj) => {
+          // confirm object exists
+          if (reqResObj) {
+            // copy reqResObj to avoid mutating argument object
+            const newReqResObj = { ...reqResObj };
+            // destructure query off of object
+            const { query } = newReqResObj;
+            // using return here to return promise into Promise.all
+            return fetch(`http://localhost:${portNumber}/graphql`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ query }),
+            })
+              .then((response: Response) => response.json())
+            // adding parsed API response to newReqResObject
+              .then((parsedResponse: {data: Object, errors: Object}) => {
+                // console.log('parsedResponse is: ', parsedResponse);
+                newReqResObj.response = parsedResponse.data || parsedResponse.errors;
+                return newReqResObj;
               })
-                .then((response: Response) => response.json())
-                // adding parsed API response to newReqResObject
-                .then((parsedResponse: {data: Object, errors: Object}) => {
-                  console.log('parsedResponse is: ', parsedResponse);
-                  newReqResObj.response = parsedResponse.data || parsedResponse.errors;
-                  return newReqResObj;
-                })
-                .catch((error: Error) => {
-                  console.log('fetch catch error: ', error, typeof error, error.constructor.name);
-                  // print any errors to the output channel
-                  channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
-                });
-            }
-            return reqResObj;
-          }),
-        );
+              .catch((error: Error) => {
+                // console.log('fetch catch error', error, typeof error, error.constructor.name);
+                // print any errors to the output channel
+                channel.append(`ERROR!!!\n${JSON.stringify(error, null, 2)}`);
+              });
+          }
+          return reqResObj;
+        }),
+      );
         // console.log('finalReqResObj: ', finalReqResObj);
-        channel.clear();
-        channel.append('GraphQuill results:');
-        channel.show(true);
-        // iterate over array of req/res objects and append each pair to the channel
-        finalReqResObj.forEach((pair) => {
-          channel.append(`\nQuery:${pair.query}\nResponse:\n${JSON.stringify(pair.response, null, 2)}\n`);
-        });
-      }, 1);
-      // append to channel to announce results (appears in channel first because of async)
-    }
+      channel.clear();
+      channel.append('GraphQuill results:');
+      channel.show(true);
+      // iterate over array of req/res objects and append each pair to the channel
+      finalReqResObj.forEach((pair) => {
+        channel.append(`\nQuery:${pair.query}\nResponse:\n${JSON.stringify(pair.response, null, 2)}\n`);
+      });
+    }, 1);
+    // append to channel to announce results (appears in channel first because of async)
   });
 }
 

@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
   const disposableActivateGraphQuill = vscode.commands.registerCommand('extension.activateGraphQuill', async () => {
     if (isOnToggle) {
       // if server is already running, break out of function by returning null
-      console.log('Server is already running');
+      // console.log('Server is already running');
       vscode.window.showInformationMessage('GraphQuill is already active');
       return null;
     }
@@ -195,7 +195,7 @@ export function activate(context: vscode.ExtensionContext) {
     // check isontoggle boolean
     if (!isOnToggle) {
       // server is already off
-      console.log('server is already off');
+      // console.log('server is already off');
       vscode.window.showInformationMessage('GraphQuill is already off');
 
       return null;
@@ -211,7 +211,8 @@ export function activate(context: vscode.ExtensionContext) {
     gqChannel.hide();
     gqChannel.clear();
 
-    console.log('in deactivate, the server turned on by graphquill boolean is: ', serverTurnedOnByGraphQuill);
+    // eslint-disable-next-line max-len
+    // console.log('in deactivate, the server turned on by graphquill boolean is: ', serverTurnedOnByGraphQuill);
     // invoke server off in this function
     return setTimeout(() => (serverTurnedOnByGraphQuill && serverOff(portNumber)), 1);
   });
@@ -276,7 +277,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(disposableCreateConfigFile);
 
   const disposableShowGraphQLSchema = vscode.commands.registerCommand('extension.showGraphQLSchema', async () => {
-    console.log('show schema running');
+    // console.log('show schema running');
     // show output channel, clear any old stuff off of it
     gqChannel.show(true);
     gqChannel.clear();
@@ -344,7 +345,8 @@ export function activate(context: vscode.ExtensionContext) {
     showGraphqlSchema(serverOnAlready, serverTurnedOnBySchemaOutputter, gqChannel, portNumber);
 
     // turn the server off if the extension turned it on
-    console.log('killing port', 'kill server boolean:', serverTurnedOnByGraphQuill, 'port number', portNumber);
+    // eslint-disable-next-line max-len
+    // console.log('killing port', 'kill server boolean:', serverTurnedOnByGraphQuill, 'port number', portNumber);
     // will resolve to false if graphquill did not start the server,
     // will kill the server/port otherwise
     return setTimeout(() => (serverTurnedOnBySchemaOutputter && serverOff(portNumber)), 1);

@@ -45,7 +45,7 @@ Anywhere in your open file, put a GraphQL query inside the graphQuill function. 
 
     graphQuill('{ product (productId: 26) { name description weight } }');
   ```
-On every save, GraphQuill will send any requests inside of the `graphQuill` functions to your GraphQL API and show responses in the GraphQuill Output Channel. To send another request, create a new invokation of the `graphQuill` function and put the new request as the argument.
+On every save, GraphQuill will send any requests inside of the `graphQuill` functions to your GraphQL API and show responses in the GraphQuill Output Channel. To send another request, create a new invocation of the `graphQuill` function and put the new request as the argument.
 
 ___
 
