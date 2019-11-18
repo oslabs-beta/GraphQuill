@@ -39,8 +39,17 @@ function readFileSendReqAndWriteResponse(
   // check if the file is within the root directory, otherwise we don't want to inject the
   // function defintion
   if (filePath.includes(rootPath) && !copy.includes('function graphQuill')) {
+    // this is a terrible workaround. commented out for now...
+    // line breaks make parsing this a pain
+    // if (copy.slice(0, 6) === 'import') {
+    //   // if there is an import line at the top, inject function def at bottom of file
+    //   const newFile = `${copy}\nfunction graphQuill() {}\n`;
+    //   fs.writeFileSync(filePath, newFile);
+    // } else {
+    // otherwise inject it at the top of the file
     const newFile = `function graphQuill() {}\n\n${copy}`;
     fs.writeFileSync(filePath, newFile);
+    // }
   }
 
   // read user's file to parse
