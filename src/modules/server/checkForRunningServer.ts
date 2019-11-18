@@ -23,7 +23,7 @@ const checkForRunningServer = (
   once: boolean,
   allowServerTimeoutConfigSetting = 3000,
 ) => {
-  console.log('CHECK FOR RUNNING SERVER IS RUNNINGGGGGG');
+  // console.log('CHECK FOR RUNNING SERVER IS RUNNINGGGGGG');
   // console.log(portNumber, once, allowServerTimeoutConfigSetting);
   // moved this line into the serverOn file so that each time serverOn is called
   // a new child process is started. This is critical to being able to toggle
@@ -37,7 +37,7 @@ const checkForRunningServer = (
   // note the Typescript (: any) used to handle unknown data inputs
   bashTerminal.stdout.on('data', (data: Buffer) => {
     // console.log(`--stdout from terminal: ${data}`);
-    console.log('terminal has printed some data...');
+    // console.log('terminal has printed some data...');
     allTerminalText = data.toString();
     portOpen = allTerminalText.includes('node');
     // console.log('allterminal text', allTerminalText);
@@ -45,10 +45,10 @@ const checkForRunningServer = (
   });
 
   // log what the exit code is in the extension terminal
-  bashTerminal.on('exit', (code: Number) => {
-    console.log(`checkForRunningServer child process exited with code ${code}`);
-    // console.log('--exit code type is', code.constructor.name);
-  });
+  // bashTerminal.on('exit', (code: Number) => {
+  //   console.log(`checkForRunningServer child process exited with code ${code}`);
+  //   console.log('--exit code type is', code.constructor.name);
+  // });
 
   // just below is the real core of the function, the child process:
   // checks if the port is active with the `lsof -i :${portNumber}\n` command
@@ -76,7 +76,7 @@ const checkForRunningServer = (
         // end terminal session
         bashTerminal.stdin.end();
 
-        console.log('port is open!');
+        // console.log('port is open!');
 
         // resolve promise
         // return a confirmed status
@@ -87,7 +87,7 @@ const checkForRunningServer = (
       // check if once is true, and numRuns is greater than one, then resolve the promise with the
       // result of portOpen
       if (once && numRuns > 1) {
-        console.log('---once conditional triggered, result is:', portOpen);
+        // console.log('---once conditional triggered, result is:', portOpen);
         // clear set intervals
         clearInterval(intervalLsofToBash);
 
@@ -110,7 +110,7 @@ const checkForRunningServer = (
     if (!once) {
       // only create this default timeout if this function was invoked with once === false
       timeoutId = setTimeout(() => {
-        console.log('timeout of checkForRunningServer');
+        // console.log('timeout of checkForRunningServer');
         // clear set intervals
         clearInterval(intervalLsofToBash);
 

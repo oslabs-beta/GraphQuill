@@ -34,7 +34,7 @@ const serverOn = (entryPoint: number, gqChannel: vscode.OutputChannel) => {
   // feedback on whether we sucessfully used a child process
   // note the Typescript (: any) used to handle unknown data inputs
   terminal.stdout.on('data', (data: Buffer) => {
-    console.log(`stdout from terminal: ${data}`);
+    // console.log(`stdout from terminal: ${data}`);
     if (data.toString().includes('ERR')) {
       // error was emitted from the bash child process
       // put it onto the channel
@@ -45,10 +45,10 @@ const serverOn = (entryPoint: number, gqChannel: vscode.OutputChannel) => {
   });
 
   // log what the exit code is in the extension terminal
-  terminal.on('exit', (code: Number) => {
-    console.log(`child process exited with code ${code}`);
-    // console.log('--exit code type is', code.constructor.name);
-  });
+  // terminal.on('exit', (code: Number) => {
+  //   console.log(`child process exited with code ${code}`);
+  //   console.log('--exit code type is', code.constructor.name);
+  // });
 
   // just below is the real core of the function, the child process:
   // we write to a new terminal to run the index.js file in the folder specified by base
@@ -58,18 +58,18 @@ const serverOn = (entryPoint: number, gqChannel: vscode.OutputChannel) => {
     // console.log('inside promise');
     setTimeout(() => {
       // console.log('root: ', root);
-      console.log('Sending stdin (node command) to terminal');
+      // console.log('Sending stdin (node command) to terminal');
 
       // this seems to take some time to spin up the server and
       // throws an error with the timing of a fetch
       // terminal.stdin.write(`node ${root}/server/index.js\n`);
       terminal.stdin.write(`node ${entryPoint}\n`);
-      console.log('Ending terminal session');
+      // console.log('Ending terminal session');
       terminal.stdin.end();
 
       // resolve promise
       resolve();
-      console.log('just resolved');
+      // console.log('just resolved');
 
       vscode.window.showInformationMessage('The GraphQuill server has been started');
     }, 1);
