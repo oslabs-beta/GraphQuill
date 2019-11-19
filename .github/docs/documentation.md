@@ -4,7 +4,7 @@
   1. [Setting up a config file](#Setting-up-the-graphquillconfigjs-file)
   1. [Writing GraphQuill Queries](#Writing-GraphQuill-Queries)
   1. [List of VS Code Extension Commands](#VS-Code-Extension-Commands)
-  1. [Explainations of Each Command](#Explainations-for-each-Command) 
+  1. [Explanations of Each Command](#Explanations-for-each-Command) 
   1. [Under the Hood of GraphQuill](#The-under-the-hood-Details)
 ---
 ---
@@ -33,7 +33,7 @@
   4. GraphQuill: Create Config File
   5. GraphQuill: Show The GraphQL Schema
 
-## Explainations for each Command
+## Explanations for each Command
   1. **Activate**:
       * Checks if the GraphQL server is running on the port specified in the config file.
       * Starts the server if it is not already running.
@@ -76,7 +76,7 @@
   3. The server-on listener
       * Servers take a non-trivial amount of time to spin up, so we designed a server-on listener to notify us when it has started. This created a smoother user experience.
       * To achieve this we made a server-on listener function that returns a promise. Then using async/await, the thread of execution could be blocked until the server was on (or the allowed timeout was exceeded).
-      * Under the hood, the server-on funciton starts another node child process that "writes" to the terminal 5 times per second. Each command is checking if the specified port has been opened on the user's machine.
+      * Under the hood, the server-on function starts another node child process that "writes" to the terminal 5 times per second. Each command is checking if the specified port has been opened on the user's machine.
       * When the child process returns that the port is exposed (or the default timeout has been reached) the promise resolves with a boolean indicating the status of the server.
   4. Parsing Queries
       * Once the server is started, all the queries typed into VS Code need to be parsed.
@@ -98,4 +98,4 @@
       * The compromise we settled on was to print the entire GraphQL schema to the output channel.
       * In the exact same method as Activating GraphQuill, this command checks if the server is already running, if not it spins it up. 
       * Once the server is on, it sends a long introspection query to receive back a big-ass object with all the information about the GraphQL schema.
-      * We built iterative function that parses through that object to create a condensed GraphQL schema that appends to the GraphQuill Output Channel (gif above in [Explainations of Each Command #5](#Explainations-for-each-Command) )
+      * We built iterative function that parses through that object to create a condensed GraphQL schema that appends to the GraphQuill Output Channel (gif above in [Explanations of Each Command #5](#Explanations-for-each-Command) )
