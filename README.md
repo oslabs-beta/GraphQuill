@@ -53,4 +53,4 @@ We are always looking to improve. If there are any contributions, feature reques
 ## Release Notes
 Created by: Alex Chao, Austin Ruby and Edward Greenberg
 
-0.12.0 | Initial release of GraphQuill, More to come! 
+0.13.0 | Initial release of GraphQuill, More to come! 
