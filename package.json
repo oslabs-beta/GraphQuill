@@ -1,10 +1,10 @@
 {
 	"name": "graphquill",
 	"displayName": "GraphQuill",
-	"description": "Welcome to a new era of GraphQL API devleopment.",
+	"description": "Welcome to a new era of GraphQL API development.",
 	"icon": ".github/graphquill-logo.png",
 	"publisher": "sproutdeveloping",
-	"version": "0.12.0",
+	"version": "0.13.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/oslabs-beta/GraphQuill.git"
@@ -52,9 +52,8 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
-		"test": "node ./out/test/runTest.js",
-		"parseUnitTest": "nyc mocha -r ts-node/register src/test/suite/parser.test.ts",
-		"serverUnitTest": "mocha -r ts-node/register src/test/suite/server.test.ts"
+		"test": "npm run parseUnitTest",
+		"parseUnitTest": "nyc mocha -r ts-node/register src/test/suite/parser.test.ts"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.4",
@@ -74,14 +73,14 @@
 		"eslint-plugin-react-hooks": "^1.7.0",
 		"glob": "^7.1.4",
 		"mocha": "^6.1.4",
+		"nyc": "^14.1.1",
 		"ts-loader": "^6.2.1",
 		"ts-node": "^8.4.1",
 		"typescript": "^3.3.1",
 		"vscode-test": "^1.2.0"
 	},
 	"dependencies": {
-		"node-fetch": "^2.6.0",
-		"nyc": "^14.1.1"
+		"node-fetch": "^2.6.0"
 	},
 	"nyc": {
 		"extension": [
