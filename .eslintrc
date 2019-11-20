@@ -13,7 +13,6 @@
     "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.ts", "**/*.test.tsx"]}]
   },
   "env": {
-    "browser": true,
     "node": true,
     "es6": true
   },
