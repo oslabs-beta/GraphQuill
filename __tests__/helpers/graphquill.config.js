@@ -1,5 +1,3 @@
-
-
 module.exports = {
   // change "./server/index.js" to the relative path from the root directory to
   // the file that starts your server
