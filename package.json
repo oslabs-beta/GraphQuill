@@ -2,7 +2,7 @@
 	"name": "graphquill",
 	"displayName": "GraphQuill",
 	"description": "Welcome to a new era of GraphQL API development.",
-	"icon": ".github/graphquill-logo.png",
+	"icon": "DOCUMENTATION/graphquill-logo.png",
 	"publisher": "sproutdeveloping",
 	"version": "0.14.0",
 	"repository": {
