@@ -18,7 +18,10 @@
 
 ### **Additional Features**
   * Output the current schema of your GraphQL API in the GraphQuill output channel.
-  * During GraphQuill's development, the team created a mock API to test the product against. It has been [open-sourced here](https://github.com/GraphQuill/Mock-GraphQL-API-Local) using locally hosted PostgreSQL and MongoDB databases to allow future users to give GraphQuill a test drive. A dockerized version is in the works for users who already have docker installed and/or do not want to install Postgres and Mongo on their machines.
+  * A GraphQL API that was used during GraphQuill's development has been open sourced in two repositories on Github to allow users to give GraphQuill a test drive. Below are two repositories, one that has been dockerized, and one that uses locally hosted PostgreSQL and MongoDB databases.
+  * [The dockerized version is here](https://github.com/GraphQuill/Mock-GraphQL-API-Docker). 
+  * [The locally hosted PostgreSQL and MongoDB databases version is here](https://github.com/GraphQuill/Mock-GraphQL-API-Local).
+
 ___
 
 ## Getting Started
