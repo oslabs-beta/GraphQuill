@@ -1,5 +1,10 @@
-/* eslint-disable import/no-unresolved */
-// import { builtinModules } from 'module';
+/**
+ * @author : Ausin Ruby Nov 7th, 2019. Modularized
+ * @function : extracts all of the queries inside of the graphQuill function invocation
+ * @param : string: an entire file as a string
+ * @returns : an array of validated queries that were found in graphQuill function invocations
+ * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * * */
 
 const parseQuery = require('./parseQuery');
 
@@ -7,7 +12,6 @@ const useCheckQueryBrackets = require('./checkQueryBrackets');
 
 // given file path, read file at path and parse for instances of 'graphQuill'
 function extractQueries(string: string) {
-  // console.log(string);
   // define text to search for in file
   const gq: string = 'graphQuill';
   const queriesArr: string[] = [];
@@ -28,6 +32,6 @@ function extractQueries(string: string) {
   // console.log('queriesArr: ', queriesArr);
   // console.log('validatedQueriesArr: ', validatedQueriesArr);
   return validatedQueriesArr;
-}// given file path, read file at path and parse for instances of 'graphQuill'
+}
 
 module.exports = extractQueries;
