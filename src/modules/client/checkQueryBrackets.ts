@@ -23,10 +23,10 @@ function checkQueryBrackets(queryString: string) {
   for (const el of queryString) { // loop the query
     if (openings.includes(el)) stack.push(el); // if query el is opening bracket, add el to stack
     if (closings.includes(el)) {
-      if (stack[stack.length - 1] === openings[closings.indexOf(el)]) stack.pop();
       // if top of stack mates a new closing bracket, we are good, can reduce stack and keep going
-      else break;
+      if (stack[stack.length - 1] === openings[closings.indexOf(el)]) stack.pop();
       // if the top of stack does not mate closing bracket, we stop loop and skip to declaring error
+      else break;
     }
     validatedSoFar.push(el); // helping keep running copy of query
   }

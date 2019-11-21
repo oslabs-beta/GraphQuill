@@ -11,11 +11,6 @@
  * @changelog : ##WHOEVER CHANGES THE FILE, date, details
  * * */
 
-// eslint-disable-next-line import/no-unresolved
-// import * as vscode from 'vscode';
-
-// const path = require('path');
-// const fs = require('fs');
 const childProcess = require('child_process');
 
 const checkForRunningServer = (
@@ -23,8 +18,6 @@ const checkForRunningServer = (
   once: boolean,
   allowServerTimeoutConfigSetting = 3000,
 ) => {
-  // console.log('CHECK FOR RUNNING SERVER IS RUNNINGGGGGG');
-  // console.log(portNumber, once, allowServerTimeoutConfigSetting);
   // moved this line into the serverOn file so that each time serverOn is called
   // a new child process is started. This is critical to being able to toggle
   // GraphQuill on and off
@@ -37,11 +30,9 @@ const checkForRunningServer = (
   // note the Typescript (: any) used to handle unknown data inputs
   bashTerminal.stdout.on('data', (data: Buffer) => {
     // console.log(`--stdout from terminal: ${data}`);
-    // console.log('terminal has printed some data...');
     allTerminalText = data.toString();
     portOpen = allTerminalText.includes('node') || allTerminalText.includes('com.docke');
     // console.log('allterminal text', allTerminalText);
-    // console.log('---data type is', data.constructor.name);
   });
 
   // log what the exit code is in the extension terminal
