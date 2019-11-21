@@ -2,9 +2,9 @@
 	"name": "graphquill",
 	"displayName": "GraphQuill",
 	"description": "Welcome to a new era of GraphQL API development.",
-	"icon": ".github/graphquill-logo.png",
+	"icon": "DOCUMENTATION/graphquill-logo.png",
 	"publisher": "sproutdeveloping",
-	"version": "0.13.0",
+	"version": "0.14.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/oslabs-beta/GraphQuill.git"
@@ -53,7 +53,7 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",
 		"test": "npm run parseUnitTest",
-		"parseUnitTest": "nyc mocha -r ts-node/register src/test/suite/parser.test.ts"
+		"parseUnitTest": "nyc mocha -r ts-node/register __tests__/suite/parser.test.ts"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.4",

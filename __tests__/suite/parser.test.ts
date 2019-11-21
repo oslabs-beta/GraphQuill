@@ -1,6 +1,10 @@
 // * THIS LINE SETS THE ENVIRONMENT TO MOCHA, so describe, it etc. are not undefined
 /* eslint-env mocha */
 
+/** 
+ * These tests are run using the `npm run parseUnitTest` command
+ */
+
 // * this rule is disable for testing files because mocha uses the this keyword (I think)
 // * under the hood, and arrow functions point to the window object
 /* eslint-disable prefer-arrow-callback */
@@ -11,10 +15,10 @@ import { expect } from 'chai';
 import 'mocha';
 import 'path';
 
-const parseQuery = require('../../modules/client/parseQuery');
-const checkQueryBrackets = require('../../modules/client/checkQueryBrackets');
-const extractQueries = require('../../modules/client/extractQueries');
-const parseConfigFile = require('../../modules/client/parseConfigFile');
+const parseQuery = require('../../src/modules/client/parseQuery');
+const checkQueryBrackets = require('../../src/modules/client/checkQueryBrackets');
+const extractQueries = require('../../src/modules/client/extractQueries');
+const parseConfigFile = require('../../src/modules/client/parseConfigFile');
 
 // const findRootDirectory = require('../../modules/client/findRootDirectory');
 // const parseConfigFile = require('../../modules/client/parseConfigFile');

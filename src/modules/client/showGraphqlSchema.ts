@@ -1,3 +1,15 @@
+/**
+ * @author : Alex Chao Nov 17th, 2019. Started
+ * @function : output the schema to the output channel
+ * @param : serverOnFromUser: boolean for if the user turned on the server
+ * @param : serverTurnedOnByGraphQuill: boolean for if graphquill turned on the server
+ * @param : gqChannel: vscode.OutputChannel, the channel to append to
+ * @param : portNumber: number for the portnumber to send the introspection query to
+ * @returns : nothing
+ * @exports : the function that will append to the output channel when invoked
+ * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * * */
+
 /* eslint-disable no-unused-vars */
 // eslint-disable-next-line import/no-unresolved
 import * as vscode from 'vscode';

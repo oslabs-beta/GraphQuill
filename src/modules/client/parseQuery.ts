@@ -8,30 +8,49 @@
 
 // add characters to string while within parentheses
 module.exports = function parseQuery(input: string) {
-  let queryString: string = ''; // string to be checked for balanced parens
-  let passedQueryString: string = ''; // string to be passed along
-  let closer: boolean = false; // trip to prevent passed along string from overwriting
-  let openParensCount: number = 0; // balanced parens validation tool
-  let closeParensCount: number = 0; // balanced parens valaidation tool
-  let index: number = 0; // helps loop through input
-  const stack: string[] = []; // helps determine when query should be passed along
-  while (index < input.length) { // loop input
-    if (input[index] === '(') { // check open parens
-      openParensCount += 1; // increment relevant counter
-      stack.push(input[index]); // add to stack
-    } else if (input[index] === ')') { // check closed parens
-      if (stack.length === 0) { // if stack is empty and we have a closed, we have a problem
+  // string to be checked for balanced parens
+  let queryString: string = '';
+
+  // final answer string
+  let passedQueryString: string = '';
+
+  // helper variables
+  let closer: boolean = false;
+  let openParensCount: number = 0;
+  let closeParensCount: number = 0;
+  let index: number = 0;
+  const stack: string[] = [];
+
+  // loop over the input
+  while (index < input.length) {
+    // check for open parens
+    if (input[index] === '(') {
+      // increment the open parens counter
+      openParensCount += 1;
+      // add to stack
+      stack.push(input[index]);
+    } else if (input[index] === ')') {
+      // check closed parens
+      if (stack.length === 0) {
+        // if stack is empty and we have a closed, we have a problem
         return 'unbalanced parens by closed';
       }
-      closeParensCount += 1; // increment relevant counter
-      stack.pop(); // closed parens eliminates open parens on stack
+      // otherwise increment the close parens counter and pop off the stack
+      closeParensCount += 1;
+      stack.pop();
     }
-    queryString += input[index]; // feed current character in loop to preliminary result string
-    if (stack.length === 0 && closer === false) { // first time we hit empty stack...
-      passedQueryString = queryString; // create result stack;
+
+    // feed current character in loop to preliminary result string
+    queryString += input[index];
+
+    // first run through loop we hit empty stack...
+    if (stack.length === 0 && closer === false) {
+      // create result stack;
+      passedQueryString = queryString;
       closer = true;
     }
     index += 1;
   }
+
   return openParensCount === closeParensCount ? passedQueryString : 'unbalanced parens';
 };
