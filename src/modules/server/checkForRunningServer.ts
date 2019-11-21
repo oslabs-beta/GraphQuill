@@ -39,7 +39,7 @@ const checkForRunningServer = (
     // console.log(`--stdout from terminal: ${data}`);
     // console.log('terminal has printed some data...');
     allTerminalText = data.toString();
-    portOpen = allTerminalText.includes('node');
+    portOpen = allTerminalText.includes('node') || allTerminalText.includes('com.docke');
     // console.log('allterminal text', allTerminalText);
     // console.log('---data type is', data.constructor.name);
   });
