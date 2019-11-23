@@ -11,7 +11,7 @@
 
 ## Setting up the graphquill.config.js file
   1. Open the command palette in VS Code (Cmd/Ctrl + Shift + P) and select `"GraphQuill: Create GraphQuill Config File"`. A default config file will be generated in your project's root directory. 
-  2. Change the `entryPoint` value to the relative path from your project's root directory, to your server file. (The default config file will set this value to './server/index.js')
+  2. If using a locally-hosted server, change `entry` value to the relative path from your project's root directory, to your server file. For external servers, set `entry` to the server's url (The default config file will set this value to './server/index.js')
   3. Change the `portNumber` variable to the port that your server will be running on (The default config file will set this value to 3000).
   4. If your server takes particularly long to start up, increase the `serverStartupTimeAllowed` variable to a time in milliseconds (The built in default is 3 seconds). GraphQuill will wait that many milliseconds for your server to start before throwing an error.
 ---
