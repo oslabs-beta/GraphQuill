@@ -357,7 +357,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
     let url: (undefined|string);
     if (externalURL) url = entryPoint;
-    console.log('before invoking showSchema: ', url);
+    // console.log('before invoking showSchema: ', url);
     // clear the channel off?
     gqChannel.clear();
 
