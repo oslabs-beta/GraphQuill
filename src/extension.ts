@@ -14,6 +14,7 @@
  * - added logic to call RFSRWR if using external server
  * - added url argument to RFSRWR -- undefined if locally hosted server, otherwise
  * will be the url of the server
+ * - accounted for external url on deactivation
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -288,6 +289,9 @@ export function activate(context: vscode.ExtensionContext) {
   // push it to the subscriptions
   context.subscriptions.push(disposableCreateConfigFile);
 
+  /** **************************************************************************
+   * * Fifth GraphQuill option in command palette to SHOW THE SCHEMA
+   ************************************************************************** */
   const disposableShowGraphQLSchema = vscode.commands.registerCommand('extension.showGraphQLSchema', async () => {
     // console.log('show schema running');
     // show output channel, clear any old stuff off of it
@@ -312,12 +316,13 @@ export function activate(context: vscode.ExtensionContext) {
     // Check ONCE if the port is open (also this does not need the third param)
     // will resolve to a true or false value
     const serverOnAlready = await checkForRunningServer(portNumber, true);
+    const externalURL = entryPoint.slice(0, 4) === 'http';
     // console.log('--serverOnFromUser after once check is:', serverOnFromUser);
     let serverTurnedOnBySchemaOutputter = false;
 
     // trigger serverOn if the user does not already have the server running
     // or if user is requesting data from external server
-    if (!serverOnAlready) {
+    if (!serverOnAlready && !externalURL) {
       // start up the user's server, pass in the gqChannel to log any error messages
       serverOn(entryPoint, gqChannel);
 
@@ -350,12 +355,14 @@ export function activate(context: vscode.ExtensionContext) {
         return setTimeout(() => serverOff(portNumber), 5000);
       }
     }
-
+    let url: (undefined|string);
+    if (externalURL) url = entryPoint;
+    console.log('before invoking showSchema: ', url);
     // clear the channel off?
     gqChannel.clear();
 
     // run required in functionality here, required in
-    showGraphqlSchema(serverOnAlready, serverTurnedOnBySchemaOutputter, gqChannel, portNumber);
+    showGraphqlSchema(serverOnAlready, serverTurnedOnBySchemaOutputter, gqChannel, portNumber, url);
 
     // turn the server off if the extension turned it on
     // eslint-disable-next-line max-len

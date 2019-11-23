@@ -50,14 +50,15 @@ function schemaToStringQueryAndMutation(schemaPiece: any) {
     // remove the last comma of the arguments, place a closing paren
     queriesStr = queriesStr.slice(0, queriesStr.length - 2);
     if (one.args.length) queriesStr += '\n  )';
-
-    // place the returned type at the end of the answer string
-    if (one.type.ofType.kind !== 'LIST') {
-      // if it's not a list, just put the type on the end, and an ! if it's non-nullable
-      queriesStr += `: ${one.type.ofType.name}${one.type.kind === 'NON_NULL' ? '!' : ''}\n`;
-    } else {
-      // similar for a list but extra check for non-nullable elements as well
-      queriesStr += `: [${one.type.ofType.ofType.ofType.name}${one.type.ofType.ofType === 'NON_NULL' ? '!' : ''}]${one.type.kind === 'NON_NULL' ? '!' : ''}\n`;
+    if (one.type.ofType) {
+      // place the returned type at the end of the answer string
+      if (one.type.ofType.kind !== 'LIST') {
+        // if it's not a list, just put the type on the end, and an ! if it's non-nullable
+        queriesStr += `: ${one.type.ofType.name}${one.type.kind === 'NON_NULL' ? '!' : ''}\n`;
+      } else {
+        // similar for a list but extra check for non-nullable elements as well
+        queriesStr += `: [${one.type.ofType.ofType.ofType.name}${one.type.ofType.ofType === 'NON_NULL' ? '!' : ''}]${one.type.kind === 'NON_NULL' ? '!' : ''}\n`;
+      }
     }
   });
   return queriesStr;
@@ -101,12 +102,16 @@ async function showGraphqlSchema(
   serverTurnedOnByGraphQuill: boolean,
   gqChannel: vscode.OutputChannel,
   portNumber: number,
+  url: (undefined|string),
 ) {
+  // if not using external url, send req to portNumber from config file
+  const validatedURL = url || `http://localhost:${portNumber}/graphql`;
+  console.log('validatedURL: ', validatedURL);
   // if the server is on from either the user or graphquill, continue
   // send the __schema query & setup on save listener
-  if (serverOnFromUser || serverTurnedOnByGraphQuill) {
+  if (serverOnFromUser || serverTurnedOnByGraphQuill || url) {
   // send that request ot get back the entire schema...
-    const all = await fetch(`http://localhost:${portNumber}/graphql`, {
+    const all = await fetch(validatedURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ // this beautiful string literal is the introspection query
@@ -174,7 +179,7 @@ async function showGraphqlSchema(
       }),
     }).then((res: Response) => res.json())
       .then((json: {data: {__schema: {types: Object[]}}}) => (
-      // eslint-disable-next-line no-underscore-dangle
+        // eslint-disable-next-line no-underscore-dangle
         json.data.__schema.types.filter((e: any) => ( // can't figure out this any...
           e.kind !== 'SCALAR')) // filter out the scalar types ('BOOLEAN', 'STRING')
         // this will cause problems for graphql apis that have custom scalar types... but mvp :)
@@ -189,8 +194,10 @@ async function showGraphqlSchema(
 
     // same thing for the mutations
     const mutations = all.filter((e: {name: string}) => e.name === 'Mutation');
-    const parsedMutations = schemaToStringQueryAndMutation(mutations);
-    gqChannel.append(`\nMUTATIONS:\n${parsedMutations}\n`);
+    if (mutations.length) {
+      const parsedMutations = schemaToStringQueryAndMutation(mutations);
+      gqChannel.append(`\nMUTATIONS:\n${parsedMutations}\n`);
+    }
 
     // almost the same thing for the types
     const types = all.filter((e: {name: string}) => e.name !== 'Mutation' && e.name !== 'Query' && e.name.slice(0, 2) !== '__');
