@@ -4,7 +4,7 @@
 	"description": "Welcome to a new era of GraphQL API development.",
 	"icon": "DOCUMENTATION/graphquill-logo.png",
 	"publisher": "sproutdeveloping",
-	"version": "0.15.0",
+	"version": "0.16.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/oslabs-beta/GraphQuill.git"
