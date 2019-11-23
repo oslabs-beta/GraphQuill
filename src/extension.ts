@@ -85,7 +85,6 @@ export function activate(context: vscode.ExtensionContext) {
     gqChannel.clear();
 
     // parse the config file
-    // TODO: move into outer activate function context?
     let parseResult = parseConfigFile(rootPath);
     entryPoint = parseResult.entryPoint; // will return the found entry point or an empty string
     allowServerTimeoutConfigSetting = parseResult.allowServerTimeoutConfigSetting;
@@ -241,7 +240,6 @@ export function activate(context: vscode.ExtensionContext) {
     // console.log('--toggle triggered!');
 
     // if the toggle boolean is false, then start the extension, otherwise end it...
-    // TODO: account for externalURL
     if (!isOnToggle) {
       // console.log('--toggle starting extension');
       // using the built in execute command and passing in a string of the command to trigger
