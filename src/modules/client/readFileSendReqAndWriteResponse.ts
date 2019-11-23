@@ -15,6 +15,8 @@
  * @changelog : Alex Chao, November 5th, 2019, merge conflict handling and server additions
  * @changelog : Alex Chao, November 6th, 2019, dynamic port number for fetching, coming from
  * the extension.ts file
+ * @changelog : Austin Ruby, November 22nd, 2019, added url parameter to hold external server's
+ * url or be undefined. if undefined, use localhost string with port from config file
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -30,9 +32,14 @@ function readFileSendReqAndWriteResponse(
   channel: vscode.OutputChannel,
   portNumber: number,
   rootPath: string, // passing the root path in to control the function def. injection
+  url: (undefined|string),
 ) {
   // parse the contents of the entire filePath file to a string
   const copy = fs.readFileSync(filePath).toString();
+  // if url is not undefined, user is querying external server
+  // and url will be the correct url
+  // otherwise use localhost with port number specified in config file
+  const validatedURL: string = url || `http://localhost:${portNumber}/graphql`;
   // check if the file is within the root directory, otherwise we don't want to inject the
   // function defintion
   if (filePath.includes(rootPath) && !copy.includes('function graphQuill')) {
@@ -75,7 +82,7 @@ function readFileSendReqAndWriteResponse(
       // wrapping queries in Promise.all to ensure all fetches resolve before appending to channel
       const finalReqResObj = await Promise.all(
         // using map to generate array of promises
-        queriesWithoutQuotes.map((reqResObj) => {
+        queriesWithoutQuotes.map((reqResObj, index) => {
           // confirm object exists
           if (reqResObj) {
             // copy reqResObj to avoid mutating argument object
@@ -83,7 +90,7 @@ function readFileSendReqAndWriteResponse(
             // destructure query off of object
             const { query } = newReqResObj;
             // using return here to return promise into Promise.all
-            return fetch(`http://localhost:${portNumber}/graphql`, {
+            return fetch(validatedURL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ query }),
@@ -91,7 +98,6 @@ function readFileSendReqAndWriteResponse(
               .then((response: Response) => response.json())
             // adding parsed API response to newReqResObject
               .then((parsedResponse: {data: Object, errors: Object}) => {
-                // console.log('parsedResponse is: ', parsedResponse);
                 newReqResObj.response = parsedResponse.data || parsedResponse.errors;
                 return newReqResObj;
               })
@@ -105,7 +111,6 @@ function readFileSendReqAndWriteResponse(
         }),
       );
 
-      // console.log('finalReqResObj: ', finalReqResObj);
       channel.clear();
       channel.append('GraphQuill results:');
       channel.show(true);
