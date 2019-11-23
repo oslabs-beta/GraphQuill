@@ -7,7 +7,7 @@
  * @param : portNumber: number for the portnumber to send the introspection query to
  * @returns : nothing
  * @exports : the function that will append to the output channel when invoked
- * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * @changelog : Austin Ruby, Nov. 23rd, 2019: accounted for external urls
  * * */
 
 /* eslint-disable no-unused-vars */
