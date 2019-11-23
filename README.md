@@ -30,7 +30,7 @@ ___
 GraphQuill can be installed from the VS Code Extensions marketplace [here](https://marketplace.visualstudio.com/items?itemName=sproutdeveloping.graphquill).
 
 ### **Setting up the config file**
-Open the command palette in VS Code (Cmd/Ctrl + Shift + P) and select `"GraphQuill: Create GraphQuill Config File"`. A default config file will be generated. Update the entry point and port number to finish your GraphQuill setup (for more details refer to the [documentation](./DOCUMENTATION/docs/documentation.md)).
+Open the command palette in VS Code (Cmd/Ctrl + Shift + P) and select `"GraphQuill: Create GraphQuill Config File"`. A default config file will be generated. If you're using a locally-hosted server, update the entry point with your server's file path and add a port number. If you're using an external server, set the entrypoint to its URL. For more details, refer to the [documentation](./DOCUMENTATION/docs/documentation.md).
 
 ### GraphQuill's Mock GraphQL API
 A GraphQL API that was used during GraphQuill's development has been open sourced in two repositories on Github to allow users to give GraphQuill a test drive. Below are two repositories, one that has been dockerized, and one that uses locally hosted PostgreSQL and MongoDB databases.
@@ -64,4 +64,4 @@ We are always looking to improve. If there are any contributions, feature reques
 ## Release Notes
 Created by: Alex Chao, Austin Ruby and Edward Greenberg
 
-0.16.0 | Initial release of GraphQuill, More to come! 
+0.15.0 | Initial release of GraphQuill, More to come! 
