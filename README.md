@@ -18,7 +18,10 @@
 
 ### **Additional Features**
   * Output the current schema of your GraphQL API in the GraphQuill output channel.
-  * During GraphQuill's development, the team created a mock API to test the product against. It has been [open-sourced here](https://github.com/GraphQuill/Mock-GraphQL-API-Local) using locally hosted PostgreSQL and MongoDB databases to allow future users to give GraphQuill a test drive. A dockerized version is in the works for users who already have docker installed and/or do not want to install Postgres and Mongo on their machines.
+  * A GraphQL API that was used during GraphQuill's development has been open sourced in two repositories on Github to allow users to give GraphQuill a test drive. Below are two repositories, one that has been dockerized, and one that uses locally hosted PostgreSQL and MongoDB databases.
+  * [The dockerized version is here](https://github.com/GraphQuill/Mock-GraphQL-API-Docker). 
+  * [The locally hosted PostgreSQL and MongoDB databases version is here](https://github.com/GraphQuill/Mock-GraphQL-API-Local).
+
 ___
 
 ## Getting Started
@@ -30,8 +33,11 @@ GraphQuill can be installed from the VS Code Extensions marketplace [here](https
 Open the command palette in VS Code (Cmd/Ctrl + Shift + P) and select `"GraphQuill: Create GraphQuill Config File"`. A default config file will be generated. Update the entry point and port number to finish your GraphQuill setup (for more details refer to the [documentation](./DOCUMENTATION/docs/documentation.md)).
 
 ### GraphQuill's Mock GraphQL API
-A GraphQL API that was used during GraphQuill's development has been [open-sourced here](https://github.com/GraphQuill/Mock-GraphQL-API-Local) to allow users to give GraphQuill a test drive. 
-A dockerized version is in the works for users who already have docker installed and/or do not want to install Postgres and Mongo on their machines.
+A GraphQL API that was used during GraphQuill's development has been open sourced in two repositories on Github to allow users to give GraphQuill a test drive. Below are two repositories, one that has been dockerized, and one that uses locally hosted PostgreSQL and MongoDB databases.
+
+[The dockerized version is here](https://github.com/GraphQuill/Mock-GraphQL-API-Docker). 
+
+[The locally hosted PostgreSQL and MongoDB databases version is here](https://github.com/GraphQuill/Mock-GraphQL-API-Local).
 
 ## Write your first GraphQuill query
 Search for GraphQuill from the command palette in VS Code (Cmd/Ctrl + Shift + P) and run the **Activate** command. If the `graphQuill` function is not defined, GraphQuill will inject a function definition on the top line of your file.
@@ -58,4 +64,4 @@ We are always looking to improve. If there are any contributions, feature reques
 ## Release Notes
 Created by: Alex Chao, Austin Ruby and Edward Greenberg
 
-0.14.0 | Initial release of GraphQuill, More to come! 
+0.15.0 | Initial release of GraphQuill, More to come! 
