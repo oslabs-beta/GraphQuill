@@ -8,7 +8,8 @@
  * @function : return an object with the entryPoint and the allowServerTimeoutConfigSetting
  * @param : none
  * @returns : an array with the root directory AND the entryPoint strings
- * @changelog : ##WHOEVER CHANGES THE FILE, date, details
+ * @changelog : Austin Ruby, Nov. 22nd, 2019: added logic to not append rootpath to
+ * entrypoint if entrypoint is external url
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -35,8 +36,11 @@ function parseConfigFile(rootPath: string) {
     const configObject = require(`${gqConfigFilePath}`);
     // console.log('config object in parseconfigfile.ts', configObject);
 
-    // set the entry point to the absolute path (root + relative entry path)
-    entryPoint = path.resolve(rootPath, configObject.entry);
+    // if the entrypoint is an external url, set entryPoint to that url
+    // otherwise set the entry point to the absolute path (root + relative entry path)
+    entryPoint = configObject.entry.slice(0, 4) === 'http'
+      ? configObject.entry
+      : path.resolve(rootPath, configObject.entry);
 
     // set the portnumber
     portNumber = configObject.portNumber;

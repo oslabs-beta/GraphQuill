@@ -8,6 +8,13 @@
  * - updating variables in the event of changes in the config files
  * @changelog : Austin Ruby, Nov. 15th: passed invocation of RFSRWR function within doc
  * save listener into debounce function to avoid overquerying API if user mashes save
+ * @changelog : Austin Ruby, Nov. 22nd:
+ * - added instructions for adding external server url to config file comments
+ * - added logic to not invoke serverOn if using external server
+ * - added logic to call RFSRWR if using external server
+ * - added url argument to RFSRWR -- undefined if locally hosted server, otherwise
+ * will be the url of the server
+ * - accounted for external url on deactivation
  * * */
 
 // eslint-disable-next-line import/no-unresolved
@@ -96,10 +103,11 @@ export function activate(context: vscode.ExtensionContext) {
     // Check ONCE if the port is open (also this does not need the third param)
     // will resolve to a true or false value
     const serverOnFromUser = await checkForRunningServer(portNumber, true);
-    // console.log('--serverOnFromUser after once check is:', serverOnFromUser);
+    const externalURL = entryPoint.slice(0, 4) === 'http';
 
     // trigger serverOn if the user does not already have the server running
-    if (!serverOnFromUser) {
+    // AND if the server is not hosted at an external URL
+    if (!serverOnFromUser && !externalURL) {
       // start up the user's server, pass in the gqChannel to log any error messages
       serverOn(entryPoint, gqChannel);
 
@@ -133,16 +141,20 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
 
-    // if the server is on from either the user or graphquill, continue
-    // send first query & setup on save listener
-    if (serverOnFromUser || serverTurnedOnByGraphQuill) {
-      // update isOnToggle (refers to state of GraphQuill extension running or not)
+    // if the server is on from either the user or graphquill,
+    // or the user is querying an external URL,
+    // continue and send first query & setup on save listener
+    if (serverOnFromUser || serverTurnedOnByGraphQuill || externalURL) {
+      let url: (undefined|string);
+      // if user's server is running at external url, set url to their specified entryPoint
+      if (externalURL) url = entryPoint;
+      // make isOnToggle true regardless of url to enable deactivation functionality
       isOnToggle = true;
 
       // get the fileName of the open file when the extension is FIRST fired
       const currOpenEditorPath: string = vscode.window.activeTextEditor!.document.fileName;
       // send that request from the currentopeneditor
-      readFileSendReqAndWriteResponse(currOpenEditorPath, gqChannel, portNumber, rootPath);
+      readFileSendReqAndWriteResponse(currOpenEditorPath, gqChannel, portNumber, rootPath, url);
 
 
       const debouncedRFSRWR = debounce(
@@ -171,7 +183,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         // send the filename and channel to the readFileSRAWR function
-        debouncedRFSRWR(event.fileName, gqChannel, portNumber, rootPath);
+        debouncedRFSRWR(event.fileName, gqChannel, portNumber, rootPath, url);
 
         // satisfying linter
         return null;
@@ -193,6 +205,7 @@ export function activate(context: vscode.ExtensionContext) {
     // console.log('--deactivate functionality triggered');
 
     // check isontoggle boolean
+    // as long as user isn't querying external URL
     if (!isOnToggle) {
       // server is already off
       // console.log('server is already off');
@@ -261,7 +274,7 @@ export function activate(context: vscode.ExtensionContext) {
     // if it does not already exist, write to a new file
     fs.writeFileSync(graphQuillConfigPath,
       // string to populate the file with
-      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server\n  entry: \'./server/index.js\',\n\n  // change 3000 to the port number that your server runs on\n  portNumber: 3000,\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
+      'module.exports = {\n  // change "./server/index.js" to the relative path from the root directory to\n  // the file that starts your server.\n  // if you\'re connecting to an external server,\n  // change "./server/index.js" to its URL in the following format:\n  // "https://yourserverurl.com"\n  entry: \'./server/index.js\',\n\n  // change 3000 to the port number that your server runs on\n  portNumber: 3000,\n\n  // to increase the amount of time allowed for the server to startup, add a time\n  // in milliseconds (integer) to the "serverStartupTimeAllowed"\n  // serverStartupTimeAllowed: 5000,\n};\n',
       'utf-8');
 
     // open the file in vscode
@@ -276,6 +289,9 @@ export function activate(context: vscode.ExtensionContext) {
   // push it to the subscriptions
   context.subscriptions.push(disposableCreateConfigFile);
 
+  /** **************************************************************************
+   * * Fifth GraphQuill option in command palette to SHOW THE SCHEMA
+   ************************************************************************** */
   const disposableShowGraphQLSchema = vscode.commands.registerCommand('extension.showGraphQLSchema', async () => {
     // console.log('show schema running');
     // show output channel, clear any old stuff off of it
@@ -300,11 +316,13 @@ export function activate(context: vscode.ExtensionContext) {
     // Check ONCE if the port is open (also this does not need the third param)
     // will resolve to a true or false value
     const serverOnAlready = await checkForRunningServer(portNumber, true);
+    const externalURL = entryPoint.slice(0, 4) === 'http';
     // console.log('--serverOnFromUser after once check is:', serverOnFromUser);
     let serverTurnedOnBySchemaOutputter = false;
 
     // trigger serverOn if the user does not already have the server running
-    if (!serverOnAlready) {
+    // or if user is requesting data from external server
+    if (!serverOnAlready && !externalURL) {
       // start up the user's server, pass in the gqChannel to log any error messages
       serverOn(entryPoint, gqChannel);
 
@@ -337,12 +355,14 @@ export function activate(context: vscode.ExtensionContext) {
         return setTimeout(() => serverOff(portNumber), 5000);
       }
     }
-
+    let url: (undefined|string);
+    if (externalURL) url = entryPoint;
+    console.log('before invoking showSchema: ', url);
     // clear the channel off?
     gqChannel.clear();
 
     // run required in functionality here, required in
-    showGraphqlSchema(serverOnAlready, serverTurnedOnBySchemaOutputter, gqChannel, portNumber);
+    showGraphqlSchema(serverOnAlready, serverTurnedOnBySchemaOutputter, gqChannel, portNumber, url);
 
     // turn the server off if the extension turned it on
     // eslint-disable-next-line max-len
