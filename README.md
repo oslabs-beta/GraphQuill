@@ -9,7 +9,7 @@
 
 ## Features
 ### **Core Features**
-  1. Starts your GraphQL server (if it is not already running).
+  1. Starts your GraphQL server (if it is not already running). NOTE: GraphQuill is now compatible with servers running in docker containers. It will check the specified port to see if it is already running.
   2. Parses GraphQL queries/mutations that are typed into the current open document in VS Code.
   3. Sends the queries/mutations to your GraphQL API.
   4. Renders the responses to the GraphQuill output channel on VS Code.
